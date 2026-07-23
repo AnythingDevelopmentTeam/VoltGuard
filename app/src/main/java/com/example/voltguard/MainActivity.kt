@@ -8,10 +8,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -32,17 +36,22 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.delay
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -100,10 +109,18 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun PagerScreen() {
     val pageCount = 4
+    val pageTitles = listOf("Battery", "Accu", "Settings", "About")
     val pagerState = rememberPagerState(pageCount = { pageCount })
     val batteryViewModel: BatteryViewModel = viewModel()
     val accuViewModel: AccuViewModel = viewModel()
     val batteryInfo by batteryViewModel.batteryInfo.collectAsState()
+    var showLabels by rememberSaveable { mutableStateOf(true) }
+
+    LaunchedEffect(pagerState.currentPage) {
+        showLabels = true
+        delay(2000)
+        showLabels = false
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         HorizontalPager(
@@ -124,6 +141,8 @@ private fun PagerScreen() {
         PageIndicator(
             pageCount = pageCount,
             currentPage = pagerState.currentPage,
+            pageTitles = pageTitles,
+            showLabels = showLabels,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 24.dp)
@@ -135,27 +154,47 @@ private fun PagerScreen() {
 private fun PageIndicator(
     pageCount: Int,
     currentPage: Int,
+    pageTitles: List<String>,
+    showLabels: Boolean,
     modifier: Modifier = Modifier
 ) {
-    Row(
+    Column(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        repeat(pageCount) { index ->
-            val isActive = index == currentPage
-            val size by animateDpAsState(
-                targetValue = if (isActive) 10.dp else 6.dp,
-                label = "dot_size"
+        AnimatedVisibility(
+            visible = showLabels,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            Text(
+                text = pageTitles.getOrElse(currentPage) { "" },
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f),
+                modifier = Modifier.padding(bottom = 6.dp)
             )
-            val alpha = if (isActive) 1f else 0.4f
+        }
 
-            Box(
-                modifier = Modifier
-                    .size(size)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = alpha))
-            )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            repeat(pageCount) { index ->
+                val isActive = index == currentPage
+                val size by animateDpAsState(
+                    targetValue = if (isActive) 10.dp else 6.dp,
+                    label = "dot_size"
+                )
+                val alpha = if (isActive) 1f else 0.4f
+
+                Box(
+                    modifier = Modifier
+                        .size(size)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.onSurface.copy(alpha = alpha))
+                )
+            }
         }
     }
 }
