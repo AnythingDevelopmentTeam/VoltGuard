@@ -52,7 +52,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun BatteryScreen(viewModel: BatteryViewModel = viewModel()) {
+fun BatteryScreen(
+    viewModel: BatteryViewModel = viewModel(),
+    modifier: Modifier = Modifier
+) {
     val batteryInfo by viewModel.batteryInfo.collectAsState()
     val serviceRunning by viewModel.serviceRunning.collectAsState()
 
@@ -69,7 +72,7 @@ fun BatteryScreen(viewModel: BatteryViewModel = viewModel()) {
     }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
