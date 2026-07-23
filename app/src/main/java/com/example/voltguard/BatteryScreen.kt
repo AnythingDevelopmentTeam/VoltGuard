@@ -30,7 +30,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,7 +56,6 @@ fun BatteryScreen(
     modifier: Modifier = Modifier
 ) {
     val batteryInfo by viewModel.batteryInfo.collectAsState()
-    val serviceRunning by viewModel.serviceRunning.collectAsState()
 
     val isCharging = batteryInfo.status == "Charging"
     val bgColor = when {
@@ -214,23 +212,6 @@ fun BatteryScreen(
         }
 
         Spacer(modifier = Modifier.height(24.dp))
-
-        AnimatedCard(visible = visible, index = 7) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Background Service",
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Switch(
-                    checked = serviceRunning,
-                    onCheckedChange = { viewModel.toggleService() }
-                )
-            }
-        }
 
         Spacer(modifier = Modifier.height(48.dp))
     }

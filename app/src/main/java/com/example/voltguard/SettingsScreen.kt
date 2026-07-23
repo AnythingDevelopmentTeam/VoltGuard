@@ -26,11 +26,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(viewModel: BatteryViewModel = viewModel()) {
     val context = LocalContext.current
     val settings = SettingsManager.getInstance(context)
+    val serviceRunning by viewModel.serviceRunning.collectAsState()
 
     val lowThreshold by settings.lowThreshold.collectAsState()
     val highThreshold by settings.highThreshold.collectAsState()
@@ -52,6 +54,24 @@ fun SettingsScreen() {
         )
 
         Spacer(modifier = Modifier.height(24.dp))
+
+        SettingsCard(title = "Service") {
+            SettingsRow(label = "Background service") {
+                Switch(
+                    checked = serviceRunning,
+                    onCheckedChange = { viewModel.toggleService() }
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Monitors battery in background, sends push alerts and tracks charge sessions",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                lineHeight = 18.sp
+            )
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         SettingsCard(title = "Notifications") {
             SettingsRow(label = "Alert notifications") {

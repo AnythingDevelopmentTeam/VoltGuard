@@ -16,13 +16,14 @@ class BatteryViewModel(application: Application) : AndroidViewModel(application)
     private val _batteryInfo = MutableStateFlow(BatteryInfo())
     val batteryInfo: StateFlow<BatteryInfo> = _batteryInfo.asStateFlow()
 
-    private val _serviceRunning = MutableStateFlow(false)
+    private val _serviceRunning = MutableStateFlow(true)
     val serviceRunning: StateFlow<Boolean> = _serviceRunning.asStateFlow()
 
     private var receiver: BroadcastReceiver? = null
 
     init {
         _batteryInfo.value = BatteryReceiver.getCurrentBatteryInfo(application)
+        BatteryService.start(application)
         startListening()
     }
 
