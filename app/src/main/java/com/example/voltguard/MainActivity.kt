@@ -128,9 +128,7 @@ private fun PagerScreen() {
     ) { _ ->
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier
-                .fillMaxSize()
-                .navigationBarsPadding()
+            modifier = Modifier.fillMaxSize()
         ) { page ->
             when (page) {
                 0 -> BatteryScreen(viewModel = batteryViewModel)

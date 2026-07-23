@@ -25,8 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -38,9 +37,9 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun WelcomeScreen(settings: SettingsManager) {
-    var lowThreshold by rememberSaveable { mutableFloatStateOf(20f) }
-    var highThreshold by rememberSaveable { mutableFloatStateOf(80f) }
-    var navigationStyle by rememberSaveable { mutableIntStateOf(0) }
+    var lowThreshold by rememberSaveable { mutableStateOf(20f) }
+    var highThreshold by rememberSaveable { mutableStateOf(80f) }
+    var navigationStyle by rememberSaveable { mutableStateOf(0) }
 
     Column(
         modifier = Modifier
