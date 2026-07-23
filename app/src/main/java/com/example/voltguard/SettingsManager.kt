@@ -20,6 +20,9 @@ class SettingsManager(context: Context) {
     private val _alertsEnabled = MutableStateFlow(prefs.getBoolean(KEY_ALERTS, true))
     val alertsEnabled: StateFlow<Boolean> = _alertsEnabled.asStateFlow()
 
+    private val _navigationStyle = MutableStateFlow(prefs.getInt(KEY_NAV_STYLE, 0))
+    val navigationStyle: StateFlow<Int> = _navigationStyle.asStateFlow()
+
     fun setLowThreshold(value: Int) {
         prefs.edit().putInt(KEY_LOW, value).apply()
         _lowThreshold.value = value
@@ -35,10 +38,16 @@ class SettingsManager(context: Context) {
         _alertsEnabled.value = enabled
     }
 
+    fun setNavigationStyle(style: Int) {
+        prefs.edit().putInt(KEY_NAV_STYLE, style).apply()
+        _navigationStyle.value = style
+    }
+
     companion object {
         private const val KEY_LOW = "low_threshold"
         private const val KEY_HIGH = "high_threshold"
         private const val KEY_ALERTS = "alerts_enabled"
+        private const val KEY_NAV_STYLE = "navigation_style"
 
         @Volatile
         private var instance: SettingsManager? = null

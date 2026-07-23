@@ -7,12 +7,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
@@ -23,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,6 +42,7 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
     val lowThreshold by settings.lowThreshold.collectAsState()
     val highThreshold by settings.highThreshold.collectAsState()
     val alertsEnabled by settings.alertsEnabled.collectAsState()
+    val navigationStyle by settings.navigationStyle.collectAsState()
 
     Column(
         modifier = modifier
@@ -54,6 +60,38 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
         )
 
         Spacer(modifier = Modifier.height(24.dp))
+
+        SettingsCard(title = "Navigation") {
+            val options = listOf("Swipe (Pager)" to 0, "Bottom bar" to 1)
+            options.forEach { (label, value) ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .selectable(
+                            selected = navigationStyle == value,
+                            onClick = { settings.setNavigationStyle(value) },
+                            role = Role.RadioButton
+                        )
+                        .padding(vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = navigationStyle == value,
+                        onClick = null,
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = MaterialTheme.colorScheme.primary
+                        )
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = label,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         SettingsCard(title = "Service") {
             SettingsRow(label = "Background service") {

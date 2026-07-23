@@ -8,8 +8,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -20,7 +30,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -41,7 +55,14 @@ class MainActivity : ComponentActivity() {
         requestNotificationPermission()
         setContent {
             VoltGuardTheme {
-                MainScreen()
+                val context = LocalContext.current
+                val settings = SettingsManager.getInstance(context)
+                val navigationStyle by settings.navigationStyle.collectAsState()
+
+                when (navigationStyle) {
+                    0 -> PagerScreen()
+                    1 -> BottomBarScreen()
+                }
             }
         }
     }
@@ -65,7 +86,70 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun MainScreen() {
+private fun PagerScreen() {
+    val pageCount = 4
+    val pagerState = rememberPagerState(pageCount = { pageCount })
+    val batteryViewModel: BatteryViewModel = viewModel()
+    val accuViewModel: AccuViewModel = viewModel()
+    val batteryInfo by batteryViewModel.batteryInfo.collectAsState()
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize()
+        ) { page ->
+            when (page) {
+                0 -> BatteryScreen(viewModel = batteryViewModel)
+                1 -> AccuScreen(
+                    batteryInfo = batteryInfo,
+                    accuViewModel = accuViewModel
+                )
+                2 -> SettingsScreen()
+                3 -> AboutScreen()
+            }
+        }
+
+        PageIndicator(
+            pageCount = pageCount,
+            currentPage = pagerState.currentPage,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 24.dp)
+        )
+    }
+}
+
+@Composable
+private fun PageIndicator(
+    pageCount: Int,
+    currentPage: Int,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        repeat(pageCount) { index ->
+            val isActive = index == currentPage
+            val size by animateDpAsState(
+                targetValue = if (isActive) 8.dp else 6.dp,
+                label = "dot_size"
+            )
+            val alpha = if (isActive) 1f else 0.4f
+
+            Box(
+                modifier = Modifier
+                    .size(size)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = alpha))
+            )
+        }
+    }
+}
+
+@Composable
+private fun BottomBarScreen() {
     val batteryViewModel: BatteryViewModel = viewModel()
     val accuViewModel: AccuViewModel = viewModel()
     val batteryInfo by batteryViewModel.batteryInfo.collectAsState()
