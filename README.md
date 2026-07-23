@@ -1,78 +1,106 @@
 # VoltGuard
 
-Android-приложение для мониторинга состояния батареи, построенное на Kotlin + Jetpack Compose.
+Android battery monitoring app built with Kotlin + Jetpack Compose.
 
-## Возможности
+## Features
 
-### Мониторинг в реальном времени
-- Текущий уровень заряда с анимированным круговым индикатором
-- Статус зарядки (заряжается / разряжается / полностью заряжен)
-- Тип питания (USB / AC / Wireless)
-- Температура и напряжение батареи
+### Real-time Monitoring
+- Animated circular battery indicator with pulse effect when charging
+- Charge status (charging / discharging / full)
+- Power source (USB / AC / Wireless)
+- Temperature and voltage
 
 ### Battery Health
-- Состояние батареи (Good / Overheat / Dead / Cold / Over Voltage)
-- Технология (Li-ion, Li-poly и т.д.)
-- Текущая ёмкость (mAh)
-- Ток заряда/разряда (mA)
-- Количество циклов заряда
+- Battery health state (Good / Overheat / Dead / Cold / Over Voltage)
+- Technology (Li-ion, Li-poly, etc.)
+- Estimated capacity (mAh)
+- Charge/discharge current (mA)
+- Charge cycle count
 
-### Фоновый сервис (BatteryService)
-- Sticky-уведомление в шторке с текущим %
-- Push-уведомления при достижении порогов:
-  - >= 80% при зарядке
-  - <= 20% при разрядке
-- Переключатель вкл/выкл сервиса из UI
+### AccuBattery Dashboard
+- Battery health ring with estimated health %
+- Time-to-full / time-to-empty estimates
+- Charge and discharge speed (%/hour)
+- Capacity bar (estimated vs design)
+- Real-time current / voltage / temperature card
+- Session history with per-session stats
+- Daily usage breakdown (discharged / charged %, screen-on time)
 
-### UI / Анимации
-- Пульсирующий индикатор при зарядке
-- Плавные цветовые переходы по уровню заряда
-- Staggered-появление карточек (fade + slide-in)
-- Glassmorphism-эффект на карточках
-- Динамический фон-градиент
+### Session Tracking
+- Automatic charge/discharge session recording
+- JSON persistence (up to 200 sessions)
+- Per-session stats: start/end level, voltage, current, temperature, duration
+- Aggregate charging stats from recent sessions
 
-## Технический стек
+### Background Service (BatteryService)
+- Sticky notification with current battery %
+- Push alerts at configurable thresholds
+- Auto-starts on app launch
+- Feeds SessionTracker on every battery change
+- Toggle in Settings
 
-| Компонент | Технология |
+### Settings
+- Alert notification toggle
+- Low threshold slider (5–40%)
+- High threshold slider (60–95%)
+- Background service toggle
+
+### UI / Animations
+- 4-page horizontal pager with iOS-style dot indicators
+- Glassmorphism cards with staggered entry animations
+- Dynamic background gradient based on charge level
+- Immersive full-screen mode
+- Material 3 with dynamic color (Android 12+)
+
+## Tech Stack
+
+| Component | Technology |
 |-----------|-----------|
-| Язык | Kotlin |
+| Language | Kotlin |
 | UI | Jetpack Compose + Material 3 |
-| Архитектура | MVVM (ViewModel + StateFlow) |
-| Сервис | Foreground Service (`specialUse`) |
+| Architecture | MVVM (ViewModel + StateFlow) |
+| Service | Foreground Service (`specialUse`) |
 | API | BatteryManager (API 21+) |
 | Min SDK | 24 (Android 7.0) |
 | Target SDK | 36 |
 
-## Структура проекта
+## Project Structure
 
 ```
 app/src/main/java/com/example/voltguard/
-├── BatteryInfo.kt          # Data class модели батареи
-├── BatteryReceiver.kt      # BroadcastReceiver для ACTION_BATTERY_CHANGED
-├── BatteryService.kt       # Foreground Service с уведомлениями
-├── BatteryViewModel.kt     # ViewModel для управления состоянием
-├── BatteryScreen.kt        # Compose UI с анимациями
-├── MainActivity.kt         # Точка входа, запрос разрешений
+├── BatteryInfo.kt          # Battery data model
+├── BatteryReceiver.kt      # BroadcastReceiver for ACTION_BATTERY_CHANGED
+├── BatteryService.kt       # Foreground Service with notifications + SessionTracker feed
+├── BatteryViewModel.kt     # ViewModel for battery state + service control
+├── BatteryScreen.kt        # Main battery UI with animations
+├── SessionTracker.kt       # Core session tracking engine, JSON persistence
+├── BatterySession.kt       # Data models (BatterySession, ChargingStats, DailyUsage)
+├── AccuViewModel.kt        # ViewModel for AccuBattery dashboard
+├── AccuScreen.kt           # AccuBattery-like dashboard UI
+├── SettingsManager.kt      # SharedPreferences wrapper for thresholds
+├── SettingsScreen.kt       # Settings UI (alerts, service toggle)
+├── AboutScreen.kt          # About page
+├── MainActivity.kt         # Entry point, 4-page navigation, permissions
 └── ui/theme/
-    ├── Color.kt            # Цветовая палитра
-    ├── Theme.kt            # Material 3 тема
-    └── Type.kt             # Типографика
+    ├── Color.kt            # Color palette
+    ├── Theme.kt            # Material 3 theme
+    └── Type.kt             # Typography
 ```
 
-## Разрешения
+## Permissions
 
-| Разрешение | Назначение |
-|-----------|-----------|
-| `FOREGROUND_SERVICE` | Запуск фонового сервиса |
-| `FOREGROUND_SERVICE_SPECIAL_USE` | Тип сервиса для мониторинга |
-| `POST_NOTIFICATIONS` | Push-уведомления (Android 13+) |
+| Permission | Purpose |
+|-----------|---------|
+| `FOREGROUND_SERVICE` | Background service |
+| `FOREGROUND_SERVICE_SPECIAL_USE` | Service type for monitoring |
+| `POST_NOTIFICATIONS` | Push notifications (Android 13+) |
 
-## Сборка
+## Build
 
 ```bash
 ./gradlew assembleDebug
 ```
 
-## Лицензия
+## License
 
 [GNU General Public License v3.0](LICENSE)
