@@ -50,7 +50,7 @@ fun AboutScreen() {
         Spacer(modifier = Modifier.height(4.dp))
 
         Text(
-            text = "v1.0.0-alpha.1",
+            text = "v1.1.0-alpha.1",
             fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
