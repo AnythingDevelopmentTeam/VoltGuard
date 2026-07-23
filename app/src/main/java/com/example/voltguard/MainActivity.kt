@@ -19,6 +19,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -161,25 +167,25 @@ private fun BottomBarScreen() {
                 NavigationBarItem(
                     selected = selectedTab == 0,
                     onClick = { selectedTab = 0 },
-                    icon = { Text("🔋") },
+                    icon = { Icon(Icons.Default.Home, contentDescription = null) },
                     label = { Text("Battery") }
                 )
                 NavigationBarItem(
                     selected = selectedTab == 1,
                     onClick = { selectedTab = 1 },
-                    icon = { Text("⚡") },
+                    icon = { Icon(Icons.Default.Star, contentDescription = null) },
                     label = { Text("Accu") }
                 )
                 NavigationBarItem(
                     selected = selectedTab == 2,
                     onClick = { selectedTab = 2 },
-                    icon = { Text("⚙️") },
+                    icon = { Icon(Icons.Default.Settings, contentDescription = null) },
                     label = { Text("Settings") }
                 )
                 NavigationBarItem(
                     selected = selectedTab == 3,
                     onClick = { selectedTab = 3 },
-                    icon = { Text("ℹ️") },
+                    icon = { Icon(Icons.Default.Info, contentDescription = null) },
                     label = { Text("About") }
                 )
             }
