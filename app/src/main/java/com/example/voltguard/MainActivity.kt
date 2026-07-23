@@ -54,7 +54,8 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     when (selectedTab) {
                         0 -> BatteryScreen(modifier = Modifier.padding(innerPadding))
-                        1 -> AboutScreen()
+                        1 -> SettingsScreen()
+                        2 -> AboutScreen()
                     }
                 }
             }
@@ -79,5 +80,6 @@ private data class Tab(
 
 private val tabs = listOf(
     Tab("Battery", "\uD83D\uDD0B", "\uD83D\uDD0C"),
+    Tab("Settings", "\u2699\uFE0F", "\u2699\uFE0F"),
     Tab("About", "\u2139\uFE0F", "\u2139\uFE0F")
 )

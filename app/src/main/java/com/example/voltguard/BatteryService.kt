@@ -55,16 +55,21 @@ class BatteryService : Service() {
     }
 
     private fun checkThresholdAndNotify(info: BatteryInfo) {
+        val settings = SettingsManager.getInstance(this)
+        if (!settings.alertsEnabled.value) return
+
+        val lowThreshold = settings.lowThreshold.value
+        val highThreshold = settings.highThreshold.value
         val isCharging = info.status == "Charging" || info.status == "Full"
 
-        if (info.level >= HIGH_THRESHOLD && isCharging && !lastWasCharging) {
+        if (info.level >= highThreshold && isCharging && !lastWasCharging) {
             sendThresholdNotification(
                 title = "Battery High",
                 message = "Battery reached ${info.level}% while charging."
             )
         }
 
-        if (info.level <= LOW_THRESHOLD && !isCharging && lastWasCharging) {
+        if (info.level <= lowThreshold && !isCharging && lastWasCharging) {
             sendThresholdNotification(
                 title = "Battery Low",
                 message = "Battery dropped to ${info.level}%."
@@ -141,8 +146,6 @@ class BatteryService : Service() {
         private const val CHANNEL_STICKY = "battery_sticky"
         private const val CHANNEL_ALERT = "battery_alert"
         private const val NOTIFICATION_ID_STICKY = 1001
-        private const val HIGH_THRESHOLD = 80
-        private const val LOW_THRESHOLD = 20
 
         fun start(context: Context) {
             val intent = Intent(context, BatteryService::class.java)
