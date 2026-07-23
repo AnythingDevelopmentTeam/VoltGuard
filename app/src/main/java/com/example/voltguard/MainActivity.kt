@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
                         1 -> BottomBarScreen()
                     }
                 } else {
-                    WelcomeScreen(settings = settings, onDone = {})
+                    WelcomeScreen(settings = settings)
                 }
             }
         }
