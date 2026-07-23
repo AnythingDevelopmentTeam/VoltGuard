@@ -120,7 +120,7 @@ fun SettingsScreen() {
         SettingsCard(title = "About this app") {
             SettingsRow(label = "Version") {
                 Text(
-                    text = "1.1.0-alpha.1",
+                    text = "1.2.0-alpha.1",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

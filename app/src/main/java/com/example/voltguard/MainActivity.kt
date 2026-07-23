@@ -4,26 +4,36 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.example.voltguard.ui.theme.VoltGuardTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -38,30 +48,7 @@ class MainActivity : ComponentActivity() {
         requestNotificationPermission()
         setContent {
             VoltGuardTheme {
-                var selectedTab by rememberSaveable { mutableIntStateOf(0) }
-
-                Scaffold(
-                    bottomBar = {
-                        NavigationBar {
-                            tabs.forEachIndexed { index, tab ->
-                                NavigationBarItem(
-                                    selected = selectedTab == index,
-                                    onClick = { selectedTab = index },
-                                    icon = {
-                                        Text(text = if (selectedTab == index) tab.activeEmoji else tab.inactiveEmoji)
-                                    },
-                                    label = { Text(tab.label) }
-                                )
-                            }
-                        }
-                    }
-                ) { innerPadding ->
-                    when (selectedTab) {
-                        0 -> BatteryScreen(modifier = Modifier.padding(innerPadding))
-                        1 -> SettingsScreen()
-                        2 -> AboutScreen()
-                    }
-                }
+                PagerScreen()
             }
         }
     }
@@ -84,14 +71,58 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private data class Tab(
-    val label: String,
-    val activeEmoji: String,
-    val inactiveEmoji: String
-)
+@Composable
+private fun PagerScreen() {
+    val pageCount = 3
+    val pagerState = rememberPagerState(pageCount = { pageCount })
 
-private val tabs = listOf(
-    Tab("Battery", "\uD83D\uDD0B", "\uD83D\uDD0C"),
-    Tab("Settings", "\u2699\uFE0F", "\u2699\uFE0F"),
-    Tab("About", "\u2139\uFE0F", "\u2139\uFE0F")
-)
+    Box(modifier = Modifier.fillMaxSize()) {
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize()
+        ) { page ->
+            when (page) {
+                0 -> BatteryScreen()
+                1 -> SettingsScreen()
+                2 -> AboutScreen()
+            }
+        }
+
+        PageIndicator(
+            pageCount = pageCount,
+            currentPage = pagerState.currentPage,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 24.dp)
+        )
+    }
+}
+
+@Composable
+private fun PageIndicator(
+    pageCount: Int,
+    currentPage: Int,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        repeat(pageCount) { index ->
+            val isActive = index == currentPage
+            val size by animateDpAsState(
+                targetValue = if (isActive) 8.dp else 6.dp,
+                label = "dot_size"
+            )
+            val alpha = if (isActive) 1f else 0.4f
+
+            Box(
+                modifier = Modifier
+                    .size(size)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = alpha))
+            )
+        }
+    }
+}
