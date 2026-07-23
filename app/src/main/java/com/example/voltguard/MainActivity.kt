@@ -8,27 +8,26 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -49,7 +48,7 @@ class MainActivity : ComponentActivity() {
         requestNotificationPermission()
         setContent {
             VoltGuardTheme {
-                PagerScreen()
+                MainScreen()
             }
         }
     }
@@ -73,64 +72,54 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun PagerScreen() {
-    val pageCount = 4
-    val pagerState = rememberPagerState(pageCount = { pageCount })
+private fun MainScreen() {
     val batteryViewModel: BatteryViewModel = viewModel()
     val accuViewModel: AccuViewModel = viewModel()
     val batteryInfo by batteryViewModel.batteryInfo.collectAsState()
+    var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.fillMaxSize()
-        ) { page ->
-            when (page) {
-                0 -> BatteryScreen(viewModel = batteryViewModel)
-                1 -> AccuScreen(
-                    batteryInfo = batteryInfo,
-                    accuViewModel = accuViewModel
+    Scaffold(
+        bottomBar = {
+            NavigationBar {
+                NavigationBarItem(
+                    selected = selectedTab == 0,
+                    onClick = { selectedTab = 0 },
+                    icon = { Icon(Icons.Default.Home, contentDescription = null) },
+                    label = { Text("Battery") }
                 )
-                2 -> SettingsScreen()
-                3 -> AboutScreen()
+                NavigationBarItem(
+                    selected = selectedTab == 1,
+                    onClick = { selectedTab = 1 },
+                    icon = { Icon(Icons.Default.Notifications, contentDescription = null) },
+                    label = { Text("Accu") }
+                )
+                NavigationBarItem(
+                    selected = selectedTab == 2,
+                    onClick = { selectedTab = 2 },
+                    icon = { Icon(Icons.Default.Settings, contentDescription = null) },
+                    label = { Text("Settings") }
+                )
+                NavigationBarItem(
+                    selected = selectedTab == 3,
+                    onClick = { selectedTab = 3 },
+                    icon = { Icon(Icons.Default.Info, contentDescription = null) },
+                    label = { Text("About") }
+                )
             }
         }
-
-        PageIndicator(
-            pageCount = pageCount,
-            currentPage = pagerState.currentPage,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 24.dp)
-        )
-    }
-}
-
-@Composable
-private fun PageIndicator(
-    pageCount: Int,
-    currentPage: Int,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        repeat(pageCount) { index ->
-            val isActive = index == currentPage
-            val size by animateDpAsState(
-                targetValue = if (isActive) 8.dp else 6.dp,
-                label = "dot_size"
+    ) { innerPadding ->
+        when (selectedTab) {
+            0 -> BatteryScreen(
+                viewModel = batteryViewModel,
+                modifier = Modifier.padding(innerPadding)
             )
-            val alpha = if (isActive) 1f else 0.4f
-
-            Box(
-                modifier = Modifier
-                    .size(size)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = alpha))
+            1 -> AccuScreen(
+                batteryInfo = batteryInfo,
+                accuViewModel = accuViewModel,
+                modifier = Modifier.padding(innerPadding)
             )
+            2 -> SettingsScreen(modifier = Modifier.padding(innerPadding))
+            3 -> AboutScreen(modifier = Modifier.padding(innerPadding))
         }
     }
 }

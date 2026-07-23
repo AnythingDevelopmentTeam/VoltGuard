@@ -48,7 +48,8 @@ import java.util.Locale
 @Composable
 fun AccuScreen(
     batteryInfo: BatteryInfo,
-    accuViewModel: AccuViewModel
+    accuViewModel: AccuViewModel,
+    modifier: Modifier = Modifier
 ) {
     val stats by accuViewModel.stats.collectAsState()
     val activeSession by accuViewModel.activeSession.collectAsState()
@@ -64,7 +65,7 @@ fun AccuScreen(
     val isCharging = batteryInfo.status == "Charging" || batteryInfo.status == "Full"
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(

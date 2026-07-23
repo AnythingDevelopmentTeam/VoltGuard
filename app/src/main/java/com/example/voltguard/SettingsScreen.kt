@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun SettingsScreen(viewModel: BatteryViewModel = viewModel()) {
+fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val settings = SettingsManager.getInstance(context)
     val serviceRunning by viewModel.serviceRunning.collectAsState()
@@ -39,7 +39,7 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel()) {
     val alertsEnabled by settings.alertsEnabled.collectAsState()
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(24.dp)
