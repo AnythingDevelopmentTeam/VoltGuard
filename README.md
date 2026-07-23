@@ -75,4 +75,4 @@ app/src/main/java/com/example/voltguard/
 
 ## Лицензия
 
-MIT License
+[GNU General Public License v3.0](LICENSE)
