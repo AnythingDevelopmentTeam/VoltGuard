@@ -30,6 +30,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -54,7 +55,7 @@ fun WelcomeScreen(settings: SettingsManager) {
             Spacer(modifier = Modifier.height(48.dp))
 
             Text(
-                text = "VoltGuard",
+                text = stringResource(R.string.welcome_title),
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -63,7 +64,7 @@ fun WelcomeScreen(settings: SettingsManager) {
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "Let's set up your battery monitor",
+                text = stringResource(R.string.welcome_subtitle),
                 fontSize = 16.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -80,7 +81,7 @@ fun WelcomeScreen(settings: SettingsManager) {
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "Alert thresholds",
+                        text = stringResource(R.string.alert_thresholds),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.primary,
@@ -88,7 +89,7 @@ fun WelcomeScreen(settings: SettingsManager) {
                     )
 
                     Text(
-                        text = "Low alert: ${lowThreshold.toInt()}%",
+                        text = stringResource(R.string.low_alert, lowThreshold.toInt().toFloat()),
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Slider(
@@ -105,7 +106,7 @@ fun WelcomeScreen(settings: SettingsManager) {
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = "High alert: ${highThreshold.toInt()}%",
+                        text = stringResource(R.string.high_alert, highThreshold.toInt().toFloat()),
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Slider(
@@ -133,14 +134,17 @@ fun WelcomeScreen(settings: SettingsManager) {
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "Navigation",
+                        text = stringResource(R.string.navigation),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(bottom = 12.dp)
                     )
 
-                    val options = listOf("Swipe (Pager)" to 0, "Bottom bar" to 1)
+                    val options = listOf(
+                        stringResource(R.string.swipe_pager) to 0,
+                        stringResource(R.string.bottom_bar) to 1
+                    )
                     options.forEach { (label, value) ->
                         Row(
                             modifier = Modifier
@@ -189,7 +193,7 @@ fun WelcomeScreen(settings: SettingsManager) {
             )
         ) {
             Text(
-                text = "Continue",
+                text = stringResource(R.string.continue_btn),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold
             )
@@ -205,7 +209,7 @@ fun WelcomeScreen(settings: SettingsManager) {
             shape = RoundedCornerShape(16.dp)
         ) {
             Text(
-                text = "Skip setup",
+                text = stringResource(R.string.skip_setup),
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }

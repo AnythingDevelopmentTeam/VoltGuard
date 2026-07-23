@@ -66,15 +66,15 @@ class BatteryService : Service() {
 
         if (info.level >= highThreshold && isCharging && !lastWasCharging) {
             sendThresholdNotification(
-                title = "Battery High",
-                message = "Battery reached ${info.level}% while charging."
+                title = getString(R.string.battery_high_title),
+                message = getString(R.string.battery_high_body, info.level)
             )
         }
 
         if (info.level <= lowThreshold && !isCharging && lastWasCharging) {
             sendThresholdNotification(
-                title = "Battery Low",
-                message = "Battery dropped to ${info.level}%."
+                title = getString(R.string.battery_low_title),
+                message = getString(R.string.battery_low_body, info.level)
             )
         }
 
@@ -87,18 +87,18 @@ class BatteryService : Service() {
 
         val stickyChannel = NotificationChannel(
             CHANNEL_STICKY,
-            "Battery Status",
+            getString(R.string.channel_status_name),
             NotificationManager.IMPORTANCE_LOW
         ).apply {
-            description = "Persistent battery status notification"
+            description = getString(R.string.channel_status_desc)
         }
 
         val alertChannel = NotificationChannel(
             CHANNEL_ALERT,
-            "Battery Alerts",
+            getString(R.string.channel_alerts_name),
             NotificationManager.IMPORTANCE_HIGH
         ).apply {
-            description = "Notifications for battery threshold alerts"
+            description = getString(R.string.channel_alerts_desc)
         }
 
         manager.createNotificationChannel(stickyChannel)
@@ -108,8 +108,8 @@ class BatteryService : Service() {
     private fun buildStickyNotification(level: Int) =
         NotificationCompat.Builder(this, CHANNEL_STICKY)
             .setSmallIcon(R.drawable.ic_notification_battery)
-            .setContentTitle("VoltGuard")
-            .setContentText("Battery: $level%")
+            .setContentTitle(getString(R.string.service_notif_title))
+            .setContentText(getString(R.string.service_notif_body, level))
             .setOngoing(true)
             .setSilent(true)
             .setContentIntent(buildMainActivityPendingIntent())

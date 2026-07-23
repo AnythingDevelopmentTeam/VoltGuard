@@ -1,5 +1,6 @@
 package com.example.voltguard
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,6 +45,7 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
     val highThreshold by settings.highThreshold.collectAsState()
     val alertsEnabled by settings.alertsEnabled.collectAsState()
     val navigationStyle by settings.navigationStyle.collectAsState()
+    val language by settings.language.collectAsState()
 
     Column(
         modifier = modifier
@@ -53,7 +56,7 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
         Spacer(modifier = Modifier.height(48.dp))
 
         Text(
-            text = "Settings",
+            text = stringResource(R.string.settings_title),
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
@@ -61,8 +64,11 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        SettingsCard(title = "Navigation") {
-            val options = listOf("Swipe (Pager)" to 0, "Bottom bar" to 1)
+        SettingsCard(title = stringResource(R.string.navigation)) {
+            val options = listOf(
+                stringResource(R.string.swipe_pager) to 0,
+                stringResource(R.string.bottom_bar) to 1
+            )
             options.forEach { (label, value) ->
                 Row(
                     modifier = Modifier
@@ -93,8 +99,47 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        SettingsCard(title = "Service") {
-            SettingsRow(label = "Background service") {
+        SettingsCard(title = stringResource(R.string.language)) {
+            val langOptions = listOf(
+                "English" to "en",
+                "Русский" to "ru"
+            )
+            langOptions.forEach { (label, value) ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .selectable(
+                            selected = language == value,
+                            onClick = {
+                                settings.setLanguage(value)
+                                LocaleHelper.setLanguage(context, value)
+                                (context as? ComponentActivity)?.recreate()
+                            },
+                            role = Role.RadioButton
+                        )
+                        .padding(vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = language == value,
+                        onClick = null,
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = MaterialTheme.colorScheme.primary
+                        )
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = label,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        SettingsCard(title = stringResource(R.string.service_title)) {
+            SettingsRow(label = stringResource(R.string.background_service)) {
                 Switch(
                     checked = serviceRunning,
                     onCheckedChange = { viewModel.toggleService() }
@@ -102,7 +147,7 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Monitors battery in background, sends push alerts and tracks charge sessions",
+                text = stringResource(R.string.service_desc),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 lineHeight = 18.sp
@@ -111,8 +156,8 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        SettingsCard(title = "Notifications") {
-            SettingsRow(label = "Alert notifications") {
+        SettingsCard(title = stringResource(R.string.notifications)) {
+            SettingsRow(label = stringResource(R.string.alert_notifications)) {
                 Switch(
                     checked = alertsEnabled,
                     onCheckedChange = { settings.setAlertsEnabled(it) }
@@ -121,7 +166,7 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            SettingsRow(label = "Low alert") {
+            SettingsRow(label = stringResource(R.string.low_alert_setting)) {
                 Text(
                     text = "$lowThreshold%",
                     style = MaterialTheme.typography.titleMedium,
@@ -143,7 +188,7 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            SettingsRow(label = "High alert") {
+            SettingsRow(label = stringResource(R.string.high_alert_setting)) {
                 Text(
                     text = "$highThreshold%",
                     style = MaterialTheme.typography.titleMedium,
@@ -166,7 +211,7 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Battery ${lowThreshold}%: push notification\nBattery ${highThreshold}%: push notification",
+                text = stringResource(R.string.notification_summary, lowThreshold, highThreshold),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 lineHeight = 18.sp
@@ -175,10 +220,10 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        SettingsCard(title = "About this app") {
-            SettingsRow(label = "Version") {
+        SettingsCard(title = stringResource(R.string.about_app)) {
+            SettingsRow(label = stringResource(R.string.ver)) {
                 Text(
-                    text = "2.0.0-alpha.2",
+                    text = stringResource(R.string.version),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -186,9 +231,9 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            SettingsRow(label = "Min SDK") {
+            SettingsRow(label = stringResource(R.string.min_sdk)) {
                 Text(
-                    text = "24 (Android 7.0)",
+                    text = stringResource(R.string.min_sdk_val),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -196,7 +241,7 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            SettingsRow(label = "Target SDK") {
+            SettingsRow(label = stringResource(R.string.target_sdk)) {
                 Text(
                     text = "36",
                     style = MaterialTheme.typography.bodyMedium,

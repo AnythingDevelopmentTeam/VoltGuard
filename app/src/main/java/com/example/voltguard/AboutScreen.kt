@@ -21,23 +21,36 @@ import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 
 @Composable
 fun AboutScreen(modifier: Modifier = Modifier) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val currentVersion = stringResource(R.string.version)
+    var updateDialog by remember { mutableStateOf<UpdateDialogState?>(null) }
 
     Column(
         modifier = modifier
@@ -49,7 +62,7 @@ fun AboutScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(48.dp))
 
         Text(
-            text = "VoltGuard",
+            text = stringResource(R.string.app_name),
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
@@ -58,7 +71,7 @@ fun AboutScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(4.dp))
 
         Text(
-            text = "v2.0.0-alpha.2",
+            text = "v${stringResource(R.string.version)}",
             fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -66,7 +79,7 @@ fun AboutScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "Battery monitor for Android",
+            text = stringResource(R.string.about_description),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -76,32 +89,32 @@ fun AboutScreen(modifier: Modifier = Modifier) {
 
         AboutCard(
             icon = { Icon(Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
-            title = "About",
-            description = "VoltGuard monitors your battery in real-time: charge level, temperature, voltage, health, and cycle count. Background service sends alerts when charge crosses 20% or 80%."
+            title = stringResource(R.string.about_title),
+            description = stringResource(R.string.about_description)
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
         AboutCard(
             icon = { Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
-            title = "Features",
-            description = "\u2022 Live battery stats with animated UI\n\u2022 Foreground service with notifications\n\u2022 Battery health & cycle count\n\u2022 Threshold alerts (20% / 80%)\n\u2022 Pulsating indicator while charging"
+            title = stringResource(R.string.features),
+            description = stringResource(R.string.features_desc)
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
         AboutCard(
             icon = { Icon(Icons.Default.Build, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
-            title = "Tech Stack",
-            description = "Kotlin \u00B7 Jetpack Compose \u00B7 Material 3\nMVVM \u00B7 StateFlow \u00B7 Foreground Service"
+            title = stringResource(R.string.tech_stack),
+            description = stringResource(R.string.tech_stack_desc)
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
         AboutCard(
             icon = { Icon(Icons.Default.List, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
-            title = "License",
-            description = "GNU General Public License v3.0\nFree and open source software."
+            title = stringResource(R.string.license_title),
+            description = stringResource(R.string.license_desc)
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -121,7 +134,7 @@ fun AboutScreen(modifier: Modifier = Modifier) {
             )
         ) {
             Text(
-                text = "View on GitHub",
+                text = stringResource(R.string.view_on_github),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
@@ -132,8 +145,97 @@ fun AboutScreen(modifier: Modifier = Modifier) {
             )
         }
 
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Card(
+            onClick = {
+                scope.launch {
+                    updateDialog = UpdateDialogState.Checking
+                    val result = UpdateChecker.check(currentVersion)
+                    updateDialog = if (result.isNewer) {
+                        UpdateDialogState.Available(result)
+                    } else {
+                        UpdateDialogState.UpToDate
+                    }
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer
+            )
+        ) {
+            Text(
+                text = stringResource(R.string.check_updates),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                textAlign = TextAlign.Center
+            )
+        }
+
         Spacer(modifier = Modifier.height(48.dp))
     }
+
+    when (val state = updateDialog) {
+        is UpdateDialogState.Checking -> {
+            AlertDialog(
+                onDismissRequest = { updateDialog = null },
+                title = { Text(stringResource(R.string.check_updates)) },
+                text = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(stringResource(R.string.checking))
+                    }
+                },
+                confirmButton = {}
+            )
+        }
+        is UpdateDialogState.UpToDate -> {
+            AlertDialog(
+                onDismissRequest = { updateDialog = null },
+                title = { Text(stringResource(R.string.check_updates)) },
+                text = { Text(stringResource(R.string.up_to_date)) },
+                confirmButton = {
+                    TextButton(onClick = { updateDialog = null }) {
+                        Text("OK")
+                    }
+                }
+            )
+        }
+        is UpdateDialogState.Available -> {
+            AlertDialog(
+                onDismissRequest = { updateDialog = null },
+                title = { Text(stringResource(R.string.check_updates)) },
+                text = { Text(stringResource(R.string.update_available, state.info.latestVersion)) },
+                confirmButton = {
+                    TextButton(onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(state.info.downloadUrl))
+                        context.startActivity(intent)
+                        updateDialog = null
+                    }) {
+                        Text(stringResource(R.string.download_update))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { updateDialog = null }) {
+                        Text("OK")
+                    }
+                }
+            )
+        }
+        null -> {}
+    }
+}
+
+private sealed class UpdateDialogState {
+    data object Checking : UpdateDialogState()
+    data object UpToDate : UpdateDialogState()
+    data class Available(val info: UpdateInfo) : UpdateDialogState()
 }
 
 @Composable

@@ -29,10 +29,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Warning
@@ -55,6 +53,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -71,7 +70,7 @@ fun BatteryScreen(
     val bgColor = when {
         batteryInfo.level >= 80 -> Color(0xFF1B3A20)
         batteryInfo.level >= 30 -> Color(0xFF3A351B)
-        else -> Color(0xFF3A1B1B)
+        else -> Color(0xFF1B1B3A)
     }
 
     var visible by remember { mutableStateOf(false) }
@@ -102,8 +101,8 @@ fun BatteryScreen(
 
         AnimatedCard(visible = visible, index = 0) {
             InfoCard(
-                label = "Status",
-                value = batteryInfo.status,
+                label = stringResource(R.string.status),
+                value = getStatusText(batteryInfo.status),
                 icon = {
                     Text(
                         when (batteryInfo.status) {
@@ -126,14 +125,14 @@ fun BatteryScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 InfoCard(
-                    label = "Temperature",
-                    value = "${batteryInfo.temperature}°C",
+                    label = stringResource(R.string.temperature),
+                    value = "${batteryInfo.temperature}${stringResource(R.string.unit_celsius)}",
                     icon = { Text("\u2103", fontSize = 24.sp) },
                     modifier = Modifier.weight(1f)
                 )
                 InfoCard(
-                    label = "Voltage",
-                    value = "${batteryInfo.voltage} mV",
+                    label = stringResource(R.string.voltage),
+                    value = "${batteryInfo.voltage} ${stringResource(R.string.unit_mv)}",
                     icon = { Text("V", fontSize = 24.sp) },
                     modifier = Modifier.weight(1f)
                 )
@@ -144,7 +143,7 @@ fun BatteryScreen(
 
         AnimatedCard(visible = visible, index = 2) {
             InfoCard(
-                label = "Power Source",
+                label = stringResource(R.string.power_source),
                 value = batteryInfo.plugType,
                 icon = {
                     Text(
@@ -164,7 +163,7 @@ fun BatteryScreen(
 
         AnimatedCard(visible = visible, index = 3) {
             Text(
-                text = "Battery Health",
+                text = stringResource(R.string.battery_health),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
@@ -175,7 +174,7 @@ fun BatteryScreen(
 
         AnimatedCard(visible = visible, index = 4) {
             InfoCard(
-                label = "Health",
+                label = stringResource(R.string.health),
                 value = batteryInfo.health,
                 icon = {
                     when (batteryInfo.health) {
@@ -196,14 +195,14 @@ fun BatteryScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 InfoCard(
-                    label = "Technology",
+                    label = stringResource(R.string.technology),
                     value = batteryInfo.technology,
                     icon = { Icon(Icons.Default.Build, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface) },
                     modifier = Modifier.weight(1f)
                 )
                 InfoCard(
-                    label = "Capacity",
-                    value = if (batteryInfo.capacity > 0) "${batteryInfo.capacity} mAh" else "N/A",
+                    label = stringResource(R.string.capacity),
+                    value = if (batteryInfo.capacity > 0) "${batteryInfo.capacity} ${stringResource(R.string.unit_mah)}" else stringResource(R.string.na),
                     icon = { Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface) },
                     modifier = Modifier.weight(1f)
                 )
@@ -219,14 +218,14 @@ fun BatteryScreen(
             ) {
                 val currentMa = batteryInfo.currentNow / 1000
                 InfoCard(
-                    label = "Current",
-                    value = if (currentMa != 0) "${currentMa} mA" else "N/A",
+                    label = stringResource(R.string.current),
+                    value = if (currentMa != 0) "${currentMa} ${stringResource(R.string.unit_ma)}" else stringResource(R.string.na),
                     icon = { Text(if (currentMa < 0) "\u2191" else "\u2193", fontSize = 24.sp) },
                     modifier = Modifier.weight(1f)
                 )
                 InfoCard(
-                    label = "Cycles",
-                    value = if (batteryInfo.cycleCount > 0) "${batteryInfo.cycleCount}" else "N/A",
+                    label = stringResource(R.string.cycles),
+                    value = if (batteryInfo.cycleCount > 0) "${batteryInfo.cycleCount}" else stringResource(R.string.na),
                     icon = { Icon(Icons.Default.Refresh, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface) },
                     modifier = Modifier.weight(1f)
                 )
@@ -234,8 +233,16 @@ fun BatteryScreen(
         }
 
         Spacer(modifier = Modifier.height(24.dp))
-
         Spacer(modifier = Modifier.height(48.dp))
+    }
+}
+
+private fun getStatusText(status: String): String {
+    return when (status) {
+        "Charging" -> "Charging"
+        "Full" -> "Full"
+        "Discharging" -> "Discharging"
+        else -> status
     }
 }
 
@@ -359,7 +366,7 @@ private fun BatteryCircularIndicator(
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = "percent",
+                text = stringResource(R.string.percent_symbol),
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

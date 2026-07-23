@@ -23,6 +23,9 @@ class SettingsManager(context: Context) {
     private val _navigationStyle = MutableStateFlow(prefs.getInt(KEY_NAV_STYLE, 0))
     val navigationStyle: StateFlow<Int> = _navigationStyle.asStateFlow()
 
+    private val _language = MutableStateFlow(prefs.getString(KEY_LANG, "en") ?: "en")
+    val language: StateFlow<String> = _language.asStateFlow()
+
     private val _firstLaunchDone = MutableStateFlow(prefs.getBoolean(KEY_FIRST_LAUNCH, false))
     val firstLaunchDone: StateFlow<Boolean> = _firstLaunchDone.asStateFlow()
 
@@ -46,6 +49,11 @@ class SettingsManager(context: Context) {
         _navigationStyle.value = style
     }
 
+    fun setLanguage(value: String) {
+        prefs.edit().putString(KEY_LANG, value).apply()
+        _language.value = value
+    }
+
     fun setFirstLaunchDone() {
         prefs.edit().putBoolean(KEY_FIRST_LAUNCH, true).apply()
         _firstLaunchDone.value = true
@@ -57,6 +65,7 @@ class SettingsManager(context: Context) {
         private const val KEY_ALERTS = "alerts_enabled"
         private const val KEY_NAV_STYLE = "navigation_style"
         private const val KEY_FIRST_LAUNCH = "first_launch_done"
+        private const val KEY_LANG = "app_language"
 
         @Volatile
         private var instance: SettingsManager? = null

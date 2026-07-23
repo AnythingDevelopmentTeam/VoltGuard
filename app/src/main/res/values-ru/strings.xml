@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VoltGuard</string>
+    <string name="version">2.0.0-alpha.2</string>
+
+    <!-- Navigation -->
+    <string name="nav_battery">Батарея</string>
+    <string name="nav_accu">Акку</string>
+    <string name="nav_settings">Настройки</string>
+    <string name="nav_about">О приложении</string>
+
+    <!-- Common -->
+    <string name="na">Н/Д</string>
+    <string name="swipe_pager">Свайп (Pager)</string>
+    <string name="bottom_bar">Нижняя панель</string>
+
+    <!-- WelcomeScreen -->
+    <string name="welcome_title">VoltGuard</string>
+    <string name="welcome_subtitle">Давайте настроим монитор батареи</string>
+    <string name="alert_thresholds">Пороги оповещений</string>
+    <string name="low_alert">Низкий: %.0f%%</string>
+    <string name="high_alert">Высокий: %.0f%%</string>
+    <string name="navigation">Навигация</string>
+    <string name="continue_btn">Продолжить</string>
+    <string name="skip_setup">Пропустить</string>
+
+    <!-- BatteryScreen -->
+    <string name="status">Статус</string>
+    <string name="charging">Зарядка</string>
+    <string name="full">Полный</string>
+    <string name="discharging">Разрядка</string>
+    <string name="temperature">Температура</string>
+    <string name="voltage">Напряжение</string>
+    <string name="power_source">Источник</string>
+    <string name="ac">Сеть</string>
+    <string name="usb">USB</string>
+    <string name="wireless">Беспроводная</string>
+    <string name="battery_health">Состояние</string>
+    <string name="health">Здоровье</string>
+    <string name="good">Хорошее</string>
+    <string name="overheat">Перегрев</string>
+    <string name="dead">Разряжен</string>
+    <string name="technology">Технология</string>
+    <string name="capacity">Ёмкость</string>
+    <string name="current">Ток</string>
+    <string name="cycles">Циклы</string>
+    <string name="percent_symbol">%</string>
+
+    <!-- AccuScreen -->
+    <string name="time_to_full">До полного</string>
+    <string name="time_to_empty">До разряда</string>
+    <string name="charge_speed">Скорость зарядки</string>
+    <string name="discharge_speed">Скорость разрядки</string>
+    <string name="charge_added">Заряжено</string>
+    <string name="discharged">Разряжено</string>
+    <string name="real_time">В реальном времени</string>
+    <string name="estimated_capacity">Расчётная</string>
+    <string name="design_capacity">Проектная</string>
+    <string name="health_percent">%s%% здоровья</string>
+    <string name="daily_usage">Дневное использование</string>
+    <string name="percent_charged">%s%% заряжено</string>
+    <string name="used_charged_format">Использовано: %s%% | Заряжено: %s%%</string>
+    <string name="screen_on">экран включён</string>
+
+    <!-- SettingsScreen -->
+    <string name="settings_title">Настройки</string>
+    <string name="language">Язык</string>
+    <string name="service_title">Сервис</string>
+    <string name="background_service">Фоновый сервис</string>
+    <string name="service_desc">Мониторит батарею в фоне, отправляет push-уведомления и отслеживает сессии зарядки</string>
+    <string name="notifications">Уведомления</string>
+    <string name="alert_notifications">Оповещения</string>
+    <string name="low_alert_setting">Низкий порог</string>
+    <string name="high_alert_setting">Высокий порог</string>
+    <string name="notification_summary">Батарея %d%%: push-уведомление&#10;Батарея %d%%: push-уведомление</string>
+    <string name="about_app">О приложении</string>
+    <string name="ver">Версия</string>
+    <string name="min_sdk">Min SDK</string>
+    <string name="min_sdk_val">24 (Android 7.0)</string>
+    <string name="target_sdk">Target SDK</string>
+
+    <!-- AboutScreen -->
+    <string name="about_title">О приложении</string>
+    <string name="about_description">VoltGuard отслеживает батарею в реальном времени: уровень заряда, температуру, напряжение, состояние и количество циклов. Фоновый сервис отправляет оповещения при достижении 20% или 80%.</string>
+    <string name="features">Возможности</string>
+    <string name="features_desc">\u2022 Живая статистика с анимацией&#10;\u2022 Фоновый сервис с уведомлениями&#10;\u2022 Состояние и количество циклов&#10;\u2022 Пороговые оповещения (20% / 80%)&#10;\u2022 Пульсирующий индикатор при зарядке</string>
+    <string name="tech_stack">Технологии</string>
+    <string name="tech_stack_desc">Kotlin \u00B7 Jetpack Compose \u00B7 Material 3&#10;MVVM \u00B7 StateFlow \u00B7 Foreground Service</string>
+    <string name="license_title">Лицензия</string>
+    <string name="license_desc">GNU General Public License v3.0&#10;Свободное и открытое ПО.</string>
+    <string name="view_on_github">Открыть на GitHub</string>
+    <string name="check_updates">Проверить обновления</string>
+    <string name="checking">Проверка обновлений…</string>
+    <string name="up_to_date">Установлена последняя версия</string>
+    <string name="update_available">Доступно обновление: v%s</string>
+    <string name="download_update">Скачать</string>
+    <string name="update_error">Не удалось проверить обновления</string>
+
+    <!-- BatteryService -->
+    <string name="battery_high_title">Батарея заряжена</string>
+    <string name="battery_high_body">Батарея достигла %d%% во время зарядки.</string>
+    <string name="battery_low_title">Батарея разряжена</string>
+    <string name="battery_low_body">Батарея упала до %d%%.</string>
+    <string name="channel_status_name">Статус батареи</string>
+    <string name="channel_status_desc">Постоянное уведомление о статусе батареи</string>
+    <string name="channel_alerts_name">Оповещения</string>
+    <string name="channel_alerts_desc">Уведомления о порогах батареи</string>
+    <string name="service_notif_title">VoltGuard</string>
+    <string name="service_notif_body">Батарея: %d%%</string>
+
+    <!-- Units -->
+    <string name="unit_celsius">°C</string>
+    <string name="unit_mv">мВ</string>
+    <string name="unit_mah">мАч</string>
+    <string name="unit_ma">мА</string>
+    <string name="unit_percent_h">%/ч</string>
+
+    <!-- BatteryWidget -->
+    <string name="widget_percent">%</string>
+</resources>

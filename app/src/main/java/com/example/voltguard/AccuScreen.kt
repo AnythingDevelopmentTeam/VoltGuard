@@ -37,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -89,7 +90,7 @@ fun AccuScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Battery Health",
+            text = stringResource(R.string.battery_health),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -101,14 +102,14 @@ fun AccuScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             StatCard(
-                label = if (isCharging) "Time to full" else "Time to empty",
+                label = if (isCharging) stringResource(R.string.time_to_full) else stringResource(R.string.time_to_empty),
                 value = formatDuration(if (isCharging) timeToFull else timeToEmpty),
                 color = if (isCharging) Color(0xFF4CAF50) else Color(0xFFF44336),
                 modifier = Modifier.weight(1f)
             )
             StatCard(
-                label = "Charge speed",
-                value = "${String.format("%.1f", stats.avgChargeSpeed)} %/h",
+                label = stringResource(R.string.charge_speed),
+                value = "${String.format("%.1f", stats.avgChargeSpeed)} ${stringResource(R.string.unit_percent_h)}",
                 color = Color(0xFF2196F3),
                 modifier = Modifier.weight(1f)
             )
@@ -121,13 +122,13 @@ fun AccuScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             StatCard(
-                label = "Discharge speed",
-                value = "${String.format("%.1f", stats.avgDischargeSpeed)} %/h",
+                label = stringResource(R.string.discharge_speed),
+                value = "${String.format("%.1f", stats.avgDischargeSpeed)} ${stringResource(R.string.unit_percent_h)}",
                 color = Color(0xFFFF9800),
                 modifier = Modifier.weight(1f)
             )
             StatCard(
-                label = "Cycles",
+                label = stringResource(R.string.cycles),
                 value = "${stats.chargeCycles}",
                 color = Color(0xFF9C27B0),
                 modifier = Modifier.weight(1f)
@@ -141,13 +142,13 @@ fun AccuScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             StatCard(
-                label = "Charge added",
+                label = stringResource(R.string.charge_added),
                 value = "${stats.totalChargeAdded}%",
                 color = Color(0xFF4CAF50),
                 modifier = Modifier.weight(1f)
             )
             StatCard(
-                label = "Discharged",
+                label = stringResource(R.string.discharged),
                 value = "${stats.totalDischarge}%",
                 color = Color(0xFFF44336),
                 modifier = Modifier.weight(1f)
@@ -157,7 +158,7 @@ fun AccuScreen(
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "Real-time",
+            text = stringResource(R.string.real_time),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
@@ -174,7 +175,7 @@ fun AccuScreen(
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "Capacity",
+            text = stringResource(R.string.capacity),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
@@ -192,13 +193,13 @@ fun AccuScreen(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 CapacityRow(
-                    label = "Estimated",
-                    value = "${stats.estimatedCapacity} mAh"
+                    label = stringResource(R.string.estimated_capacity),
+                    value = "${stats.estimatedCapacity} ${stringResource(R.string.unit_mah)}"
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 CapacityRow(
-                    label = "Design",
-                    value = "${stats.designCapacity} mAh"
+                    label = stringResource(R.string.design_capacity),
+                    value = "${stats.designCapacity} ${stringResource(R.string.unit_mah)}"
                 )
                 Spacer(modifier = Modifier.height(12.dp))
 
@@ -224,7 +225,7 @@ fun AccuScreen(
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "${String.format("%.1f", stats.healthPercent)}% health",
+                    text = stringResource(R.string.health_percent, String.format("%.1f", stats.healthPercent)),
                     style = MaterialTheme.typography.labelSmall,
                     color = healthColor
                 )
@@ -235,7 +236,7 @@ fun AccuScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = "Daily Usage",
+                text = stringResource(R.string.daily_usage),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
@@ -302,13 +303,13 @@ private fun ChargeHealthRing(healthPercent: Float, level: Int) {
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = "percent",
+                text = stringResource(R.string.percent_symbol),
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "$level% charged",
+                text = stringResource(R.string.percent_charged, level.toString()),
                 fontSize = 11.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -373,9 +374,9 @@ private fun RealtimeCard(
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            RealtimeItem("Current", if (currentMa != 0) "${currentMa} mA" else "N/A")
-            RealtimeItem("Voltage", "$voltage mV")
-            RealtimeItem("Temp", "${temperature}\u00B0C")
+            RealtimeItem(stringResource(R.string.current), if (currentMa != 0) "${currentMa} ${stringResource(R.string.unit_ma)}" else stringResource(R.string.na))
+            RealtimeItem(stringResource(R.string.voltage), "$voltage ${stringResource(R.string.unit_mv)}")
+            RealtimeItem(stringResource(R.string.temperature), "${temperature}${stringResource(R.string.unit_celsius)}")
         }
     }
 }
@@ -440,7 +441,7 @@ private fun DailyUsageCard(usage: DailyUsage) {
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = "Used: ${usage.dischargePercent}% | Charged: ${usage.chargePercent}%",
+                    text = stringResource(R.string.used_charged_format, usage.dischargePercent.toString(), usage.chargePercent.toString()),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -452,7 +453,7 @@ private fun DailyUsageCard(usage: DailyUsage) {
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = "screen on",
+                    text = stringResource(R.string.screen_on),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

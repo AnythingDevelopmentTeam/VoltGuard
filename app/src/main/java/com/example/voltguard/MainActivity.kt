@@ -3,6 +3,7 @@ package com.example.voltguard
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -47,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,6 +61,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.voltguard.ui.theme.VoltGuardTheme
 
 class MainActivity : ComponentActivity() {
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.applyLocale(newBase))
+    }
 
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -109,7 +115,12 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun PagerScreen() {
     val pageCount = 4
-    val pageTitles = listOf("Battery", "Accu", "Settings", "About")
+    val pageTitles = listOf(
+        stringResource(R.string.nav_battery),
+        stringResource(R.string.nav_accu),
+        stringResource(R.string.nav_settings),
+        stringResource(R.string.nav_about)
+    )
     val pagerState = rememberPagerState(pageCount = { pageCount })
     val batteryViewModel: BatteryViewModel = viewModel()
     val accuViewModel: AccuViewModel = viewModel()
@@ -213,25 +224,25 @@ private fun BottomBarScreen() {
                     selected = selectedTab == 0,
                     onClick = { selectedTab = 0 },
                     icon = { Icon(Icons.Default.Home, contentDescription = null) },
-                    label = { Text("Battery") }
+                    label = { Text(stringResource(R.string.nav_battery)) }
                 )
                 NavigationBarItem(
                     selected = selectedTab == 1,
                     onClick = { selectedTab = 1 },
                     icon = { Icon(Icons.Default.Star, contentDescription = null) },
-                    label = { Text("Accu") }
+                    label = { Text(stringResource(R.string.nav_accu)) }
                 )
                 NavigationBarItem(
                     selected = selectedTab == 2,
                     onClick = { selectedTab = 2 },
                     icon = { Icon(Icons.Default.Settings, contentDescription = null) },
-                    label = { Text("Settings") }
+                    label = { Text(stringResource(R.string.nav_settings)) }
                 )
                 NavigationBarItem(
                     selected = selectedTab == 3,
                     onClick = { selectedTab = 3 },
                     icon = { Icon(Icons.Default.Info, contentDescription = null) },
-                    label = { Text("About") }
+                    label = { Text(stringResource(R.string.nav_about)) }
                 )
             }
         }
