@@ -3,6 +3,7 @@ package com.example.voltguard
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,12 +11,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -67,7 +75,7 @@ fun AboutScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(32.dp))
 
         AboutCard(
-            emoji = "\u2139\uFE0F",
+            icon = { Icon(Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
             title = "About",
             description = "VoltGuard monitors your battery in real-time: charge level, temperature, voltage, health, and cycle count. Background service sends alerts when charge crosses 20% or 80%."
         )
@@ -75,7 +83,7 @@ fun AboutScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(12.dp))
 
         AboutCard(
-            emoji = "\u2B50",
+            icon = { Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
             title = "Features",
             description = "\u2022 Live battery stats with animated UI\n\u2022 Foreground service with notifications\n\u2022 Battery health & cycle count\n\u2022 Threshold alerts (20% / 80%)\n\u2022 Pulsating indicator while charging"
         )
@@ -83,7 +91,7 @@ fun AboutScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(12.dp))
 
         AboutCard(
-            emoji = "\uD83D\uDD27",
+            icon = { Icon(Icons.Default.Build, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
             title = "Tech Stack",
             description = "Kotlin \u00B7 Jetpack Compose \u00B7 Material 3\nMVVM \u00B7 StateFlow \u00B7 Foreground Service"
         )
@@ -91,7 +99,7 @@ fun AboutScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(12.dp))
 
         AboutCard(
-            emoji = "\uD83D\uDCDC",
+            icon = { Icon(Icons.Default.List, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
             title = "License",
             description = "GNU General Public License v3.0\nFree and open source software."
         )
@@ -130,7 +138,7 @@ fun AboutScreen(modifier: Modifier = Modifier) {
 
 @Composable
 private fun AboutCard(
-    emoji: String,
+    icon: @Composable () -> Unit,
     title: String,
     description: String
 ) {
@@ -149,10 +157,9 @@ private fun AboutCard(
             verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text(
-                text = emoji,
-                fontSize = 24.sp
-            )
+            Box(modifier = Modifier.size(24.dp)) {
+                icon()
+            }
             Column {
                 Text(
                     text = title,

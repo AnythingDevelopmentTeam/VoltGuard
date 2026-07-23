@@ -27,8 +27,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -94,11 +104,16 @@ fun BatteryScreen(
             InfoCard(
                 label = "Status",
                 value = batteryInfo.status,
-                icon = when (batteryInfo.status) {
-                    "Charging" -> "⚡"
-                    "Full" -> "✓"
-                    "Discharging" -> "↓"
-                    else -> "—"
+                icon = {
+                    Text(
+                        when (batteryInfo.status) {
+                            "Charging" -> "~"
+                            "Full" -> "\u2713"
+                            "Discharging" -> "\u2193"
+                            else -> "\u2014"
+                        },
+                        fontSize = 24.sp
+                    )
                 }
             )
         }
@@ -113,13 +128,13 @@ fun BatteryScreen(
                 InfoCard(
                     label = "Temperature",
                     value = "${batteryInfo.temperature}°C",
-                    icon = "🌡",
+                    icon = { Text("\u2103", fontSize = 24.sp) },
                     modifier = Modifier.weight(1f)
                 )
                 InfoCard(
                     label = "Voltage",
                     value = "${batteryInfo.voltage} mV",
-                    icon = "⚡",
+                    icon = { Text("V", fontSize = 24.sp) },
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -131,11 +146,16 @@ fun BatteryScreen(
             InfoCard(
                 label = "Power Source",
                 value = batteryInfo.plugType,
-                icon = when (batteryInfo.plugType) {
-                    "AC" -> "🔌"
-                    "USB" -> "USB"
-                    "Wireless" -> "~"
-                    else -> "—"
+                icon = {
+                    Text(
+                        when (batteryInfo.plugType) {
+                            "AC" -> "AC"
+                            "USB" -> "USB"
+                            "Wireless" -> "~"
+                            else -> "\u2014"
+                        },
+                        fontSize = if (batteryInfo.plugType == "AC" || batteryInfo.plugType == "USB") 14.sp else 24.sp
+                    )
                 }
             )
         }
@@ -157,11 +177,13 @@ fun BatteryScreen(
             InfoCard(
                 label = "Health",
                 value = batteryInfo.health,
-                icon = when (batteryInfo.health) {
-                    "Good" -> "♥"
-                    "Overheat" -> "🔥"
-                    "Dead" -> "☠"
-                    else -> "?"
+                icon = {
+                    when (batteryInfo.health) {
+                        "Good" -> Icon(Icons.Default.Favorite, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface)
+                        "Overheat" -> Icon(Icons.Default.Warning, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface)
+                        "Dead" -> Icon(Icons.Default.Close, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface)
+                        else -> Text("?", fontSize = 24.sp)
+                    }
                 }
             )
         }
@@ -176,13 +198,13 @@ fun BatteryScreen(
                 InfoCard(
                     label = "Technology",
                     value = batteryInfo.technology,
-                    icon = "🔬",
+                    icon = { Icon(Icons.Default.Build, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface) },
                     modifier = Modifier.weight(1f)
                 )
                 InfoCard(
                     label = "Capacity",
                     value = if (batteryInfo.capacity > 0) "${batteryInfo.capacity} mAh" else "N/A",
-                    icon = "📦",
+                    icon = { Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface) },
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -199,13 +221,13 @@ fun BatteryScreen(
                 InfoCard(
                     label = "Current",
                     value = if (currentMa != 0) "${currentMa} mA" else "N/A",
-                    icon = if (currentMa < 0) "↑" else "↓",
+                    icon = { Text(if (currentMa < 0) "\u2191" else "\u2193", fontSize = 24.sp) },
                     modifier = Modifier.weight(1f)
                 )
                 InfoCard(
                     label = "Cycles",
                     value = if (batteryInfo.cycleCount > 0) "${batteryInfo.cycleCount}" else "N/A",
-                    icon = "🔄",
+                    icon = { Icon(Icons.Default.Refresh, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface) },
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -349,7 +371,7 @@ private fun BatteryCircularIndicator(
 private fun InfoCard(
     label: String,
     value: String,
-    icon: String,
+    icon: @Composable () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -366,7 +388,7 @@ private fun InfoCard(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = icon, fontSize = 24.sp)
+            icon()
             Spacer(modifier = Modifier.width(12.dp))
             Column {
                 Text(
