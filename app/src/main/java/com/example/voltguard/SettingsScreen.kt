@@ -178,7 +178,7 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
         SettingsCard(title = "About this app") {
             SettingsRow(label = "Version") {
                 Text(
-                    text = "2.0.0-alpha.1",
+                    text = "2.0.0-alpha.2",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
