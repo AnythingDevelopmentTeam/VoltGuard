@@ -39,9 +39,11 @@ class BatteryService : Service() {
     }
 
     private fun registerBatteryReceiver() {
+        val tracker = SessionTracker.getInstance(this)
         batteryReceiver = BatteryReceiver { info ->
             updateStickyNotification(info.level)
             checkThresholdAndNotify(info)
+            tracker.onBatteryChanged(info)
         }
         val intentFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
         registerReceiver(batteryReceiver, intentFilter)

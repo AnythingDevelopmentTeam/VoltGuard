@@ -23,6 +23,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,8 +33,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.voltguard.ui.theme.VoltGuardTheme
-import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -73,8 +74,11 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun PagerScreen() {
-    val pageCount = 3
+    val pageCount = 4
     val pagerState = rememberPagerState(pageCount = { pageCount })
+    val batteryViewModel: BatteryViewModel = viewModel()
+    val accuViewModel: AccuViewModel = viewModel()
+    val batteryInfo by batteryViewModel.batteryInfo.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         HorizontalPager(
@@ -82,9 +86,13 @@ private fun PagerScreen() {
             modifier = Modifier.fillMaxSize()
         ) { page ->
             when (page) {
-                0 -> BatteryScreen()
-                1 -> SettingsScreen()
-                2 -> AboutScreen()
+                0 -> BatteryScreen(viewModel = batteryViewModel)
+                1 -> AccuScreen(
+                    batteryInfo = batteryInfo,
+                    accuViewModel = accuViewModel
+                )
+                2 -> SettingsScreen()
+                3 -> AboutScreen()
             }
         }
 
