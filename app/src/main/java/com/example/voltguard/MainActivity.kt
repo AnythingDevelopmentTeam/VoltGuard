@@ -63,11 +63,16 @@ class MainActivity : ComponentActivity() {
             VoltGuardTheme {
                 val context = LocalContext.current
                 val settings = SettingsManager.getInstance(context)
+                val firstLaunchDone by settings.firstLaunchDone.collectAsState()
                 val navigationStyle by settings.navigationStyle.collectAsState()
 
-                when (navigationStyle) {
-                    0 -> PagerScreen()
-                    1 -> BottomBarScreen()
+                if (firstLaunchDone) {
+                    when (navigationStyle) {
+                        0 -> PagerScreen()
+                        1 -> BottomBarScreen()
+                    }
+                } else {
+                    WelcomeScreen(onDone = { settings.setFirstLaunchDone() })
                 }
             }
         }
