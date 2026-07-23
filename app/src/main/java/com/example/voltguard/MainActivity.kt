@@ -9,9 +9,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BatteryFull
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -22,7 +19,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.core.content.ContextCompat
 import com.example.voltguard.ui.theme.VoltGuardTheme
 
@@ -48,10 +44,7 @@ class MainActivity : ComponentActivity() {
                                     selected = selectedTab == index,
                                     onClick = { selectedTab = index },
                                     icon = {
-                                        Icon(
-                                            imageVector = if (selectedTab == index) tab.selectedIcon else tab.unselectedIcon,
-                                            contentDescription = tab.label
-                                        )
+                                        Text(text = if (selectedTab == index) tab.activeEmoji else tab.inactiveEmoji)
                                     },
                                     label = { Text(tab.label) }
                                 )
@@ -80,11 +73,11 @@ class MainActivity : ComponentActivity() {
 
 private data class Tab(
     val label: String,
-    val selectedIcon: ImageVector,
-    val unselectedIcon: ImageVector
+    val activeEmoji: String,
+    val inactiveEmoji: String
 )
 
 private val tabs = listOf(
-    Tab("Battery", Icons.Filled.BatteryFull, Icons.Filled.BatteryFull),
-    Tab("About", Icons.Filled.Info, Icons.Filled.Info)
+    Tab("Battery", "\uD83D\uDD0B", "\uD83D\uDD0C"),
+    Tab("About", "\u2139\uFE0F", "\u2139\uFE0F")
 )

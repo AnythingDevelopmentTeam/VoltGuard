@@ -10,25 +10,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -75,7 +67,7 @@ fun AboutScreen() {
         Spacer(modifier = Modifier.height(32.dp))
 
         AboutCard(
-            icon = Icons.Filled.Info,
+            emoji = "\u2139\uFE0F",
             title = "About",
             description = "VoltGuard monitors your battery in real-time: charge level, temperature, voltage, health, and cycle count. Background service sends alerts when charge crosses 20% or 80%."
         )
@@ -83,23 +75,23 @@ fun AboutScreen() {
         Spacer(modifier = Modifier.height(12.dp))
 
         AboutCard(
-            icon = Icons.Filled.Star,
+            emoji = "\u2B50",
             title = "Features",
-            description = "• Live battery stats with animated UI\n• Foreground service with notifications\n• Battery health & cycle count\n• Threshold alerts (20% / 80%)\n• Pulsating indicator while charging"
+            description = "\u2022 Live battery stats with animated UI\n\u2022 Foreground service with notifications\n\u2022 Battery health & cycle count\n\u2022 Threshold alerts (20% / 80%)\n\u2022 Pulsating indicator while charging"
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
         AboutCard(
-            icon = Icons.Filled.Build,
+            emoji = "\uD83D\uDD27",
             title = "Tech Stack",
-            description = "Kotlin · Jetpack Compose · Material 3\nMVVM · StateFlow · Foreground Service"
+            description = "Kotlin \u00B7 Jetpack Compose \u00B7 Material 3\nMVVM \u00B7 StateFlow \u00B7 Foreground Service"
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
         AboutCard(
-            icon = Icons.Filled.Warning,
+            emoji = "\uD83D\uDCDC",
             title = "License",
             description = "GNU General Public License v3.0\nFree and open source software."
         )
@@ -138,7 +130,7 @@ fun AboutScreen() {
 
 @Composable
 private fun AboutCard(
-    icon: ImageVector,
+    emoji: String,
     title: String,
     description: String
 ) {
@@ -157,11 +149,9 @@ private fun AboutCard(
             verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(24.dp)
+            Text(
+                text = emoji,
+                fontSize = 24.sp
             )
             Column {
                 Text(
