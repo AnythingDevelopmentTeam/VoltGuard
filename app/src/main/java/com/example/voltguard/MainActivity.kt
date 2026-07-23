@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
@@ -195,19 +196,31 @@ private fun BottomBarScreen() {
                 )
             }
         }
-    ) { innerPadding ->
+    ) { _ ->
         when (selectedTab) {
             0 -> BatteryScreen(
                 viewModel = batteryViewModel,
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .navigationBarsPadding()
             )
             1 -> AccuScreen(
                 batteryInfo = batteryInfo,
                 accuViewModel = accuViewModel,
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .navigationBarsPadding()
             )
-            2 -> SettingsScreen(modifier = Modifier.padding(innerPadding))
-            3 -> AboutScreen(modifier = Modifier.padding(innerPadding))
+            2 -> SettingsScreen(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .navigationBarsPadding()
+            )
+            3 -> AboutScreen(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .navigationBarsPadding()
+            )
         }
     }
 }
