@@ -288,9 +288,9 @@ private fun AutoUpdateDialog() {
         val current = BuildConfig.VERSION_NAME
         val result = UpdateChecker.check(current)
         if (result.isNewer) {
-            prefs.edit().putLong("last_update_check", System.currentTimeMillis()).apply()
             updateInfo = result
         }
+        prefs.edit().putLong("last_update_check", System.currentTimeMillis()).apply()
     }
 
     if (downloading) {

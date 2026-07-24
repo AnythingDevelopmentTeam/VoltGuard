@@ -217,7 +217,7 @@ fun AboutScreen(modifier: Modifier = Modifier) {
                         scope.launch {
                             updateDialog = UpdateDialogState.Downloading
                             val ok = ApkDownloader.downloadAndInstall(context, state.info.apkUrl)
-                            updateDialog = if (ok) null else UpdateDialogState.UpToDate
+                            updateDialog = if (ok) null else UpdateDialogState.Error
                         }
                     }) {
                         Text(stringResource(R.string.download_update))
@@ -244,6 +244,18 @@ fun AboutScreen(modifier: Modifier = Modifier) {
                 confirmButton = {}
             )
         }
+        is UpdateDialogState.Error -> {
+            AlertDialog(
+                onDismissRequest = { updateDialog = null },
+                title = { Text(stringResource(R.string.check_updates)) },
+                text = { Text(stringResource(R.string.update_error)) },
+                confirmButton = {
+                    TextButton(onClick = { updateDialog = null }) {
+                        Text("OK")
+                    }
+                }
+            )
+        }
         null -> {}
     }
 }
@@ -252,6 +264,7 @@ private sealed class UpdateDialogState {
     data object Checking : UpdateDialogState()
     data object UpToDate : UpdateDialogState()
     data object Downloading : UpdateDialogState()
+    data object Error : UpdateDialogState()
     data class Available(val info: UpdateInfo) : UpdateDialogState()
 }
 
