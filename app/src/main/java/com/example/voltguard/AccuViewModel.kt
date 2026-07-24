@@ -45,31 +45,31 @@ class AccuViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun calculateTimeEstimates(info: BatteryInfo) {
         val currentMa = kotlin.math.abs(info.currentNow / 1000)
-        if (currentMa == 0) {
+        val isFull = info.status == "Full"
+
+        if (currentMa == 0 || isFull) {
             _timeToFull.value = 0L
             _timeToEmpty.value = 0L
             return
         }
 
         val remainingPercent = 100 - info.level
-        val isCharging = info.status == "Charging" || info.status == "Full"
+        val isCharging = info.status == "Charging"
 
         if (isCharging && currentMa > 0) {
-            val hours = (remainingPercent * 40f) / currentMa
+            val capacityAh = _stats.value.estimatedCapacity / 1000f
+            val hours = (remainingPercent * capacityAh * 10f) / currentMa
             _timeToFull.value = (hours * 3600000L).toLong()
             _timeToEmpty.value = 0L
         } else if (!isCharging && currentMa > 0) {
-            val hours = (info.level * 40f) / currentMa
+            val capacityAh = _stats.value.estimatedCapacity / 1000f
+            val hours = (info.level * capacityAh * 10f) / currentMa
             _timeToEmpty.value = (hours * 3600000L).toLong()
             _timeToFull.value = 0L
         }
     }
 
     private fun getRecentSessions(): List<BatterySession> {
-        val sessions = mutableListOf<BatterySession>()
-        for (i in 0 until minOf(50, sessionTracker.getStats().totalSessions)) {
-            sessions.add(sessionTracker.getActiveSession() ?: break)
-        }
-        return history.value
+        return sessionTracker.getRecentSessions(50)
     }
 }

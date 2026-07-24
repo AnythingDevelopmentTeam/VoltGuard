@@ -100,6 +100,11 @@ class SessionTracker(context: Context) {
 
     fun getActiveSession(): BatterySession? = currentSession
 
+    fun getRecentSessions(limit: Int = 50): List<BatterySession> {
+        val all = loadSessions()
+        return all.takeLast(limit).reversed()
+    }
+
     fun getStats(): ChargingStats {
         val sessions = loadSessions()
         val chargeSessions = sessions.filter { it.type == SessionType.CHARGE }
