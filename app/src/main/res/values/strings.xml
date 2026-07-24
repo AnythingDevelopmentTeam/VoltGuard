@@ -81,7 +81,7 @@
 
     <!-- AboutScreen -->
     <string name="about_title">About</string>
-    <string name="about_description">VoltGuard monitors your battery in real-time: charge level, temperature, voltage, health, and cycle count. Background service sends alerts when charge crosses 20% or 80%.</string>
+    <string name="about_description" formatted="false">VoltGuard monitors your battery in real-time: charge level, temperature, voltage, health, and cycle count. Background service sends alerts when charge crosses 20% or 80%.</string>
     <string name="features">Features</string>
     <string name="features_desc">\u2022 Live battery stats with animated UI&#10;\u2022 Foreground service with notifications&#10;\u2022 Battery health &amp; cycle count&#10;\u2022 Threshold alerts (20% / 80%)&#10;\u2022 Pulsating indicator while charging</string>
     <string name="tech_stack">Tech Stack</string>

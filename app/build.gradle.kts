@@ -32,7 +32,9 @@ android {
 
     buildTypes {
         release {
-            signingConfig = signingConfigs["release"]
+            if (file("keystore.jks").exists()) {
+                signingConfig = signingConfigs["release"]
+            }
             optimization {
                 enable = false
             }
