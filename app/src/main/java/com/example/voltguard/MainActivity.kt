@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -30,18 +32,21 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -50,10 +55,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -90,6 +97,8 @@ class MainActivity : ComponentActivity() {
                 } else {
                     WelcomeScreen(settings = settings)
                 }
+
+                AutoUpdateDialog()
             }
         }
     }
@@ -272,5 +281,48 @@ private fun BottomBarScreen() {
                     .navigationBarsPadding()
             )
         }
+    }
+}
+
+@Composable
+private fun AutoUpdateDialog() {
+    val context = LocalContext.current
+    var updateInfo by remember { mutableStateOf<UpdateInfo?>(null) }
+
+    LaunchedEffect(Unit) {
+        val prefs = context.getSharedPreferences("voltguard_prefs", Context.MODE_PRIVATE)
+        val lastCheck = prefs.getLong("last_update_check", 0)
+        if (System.currentTimeMillis() - lastCheck < 86400000) return@LaunchedEffect
+        prefs.edit().putLong("last_update_check", System.currentTimeMillis()).apply()
+        val current = context.getString(R.string.version)
+        val result = UpdateChecker.check(current)
+        if (result.isNewer) updateInfo = result
+    }
+
+    updateInfo?.let { info ->
+        AlertDialog(
+            onDismissRequest = { updateInfo = null },
+            title = { Text(stringResource(R.string.update_available, info.latestVersion)) },
+            text = {
+                Text(
+                    text = stringResource(R.string.download_update),
+                    textAlign = TextAlign.Center
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(info.downloadUrl))
+                    context.startActivity(intent)
+                    updateInfo = null
+                }) {
+                    Text(stringResource(R.string.download_update))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { updateInfo = null }) {
+                    Text("OK")
+                }
+            }
+        )
     }
 }

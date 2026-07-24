@@ -27,8 +27,8 @@ androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-compose-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core" }
-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version = "1.1.0" }
-glance-material3 = { group = "androidx.glance", name = "glance-material3", version = "1.1.0" }
+glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version = "1.2.0-rc01" }
+glance-material3 = { group = "androidx.glance", name = "glance-material3", version = "1.2.0-rc01" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
