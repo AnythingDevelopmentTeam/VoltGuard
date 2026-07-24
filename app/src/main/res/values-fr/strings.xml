@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VoltGuard</string>
+    <string name="version">1.0.0-beta.2</string>
+
+    <string name="nav_battery">Batterie</string>
+    <string name="nav_accu">Accu</string>
+    <string name="nav_settings">Paramètres</string>
+    <string name="nav_about">À propos</string>
+
+    <string name="na">N/D</string>
+    <string name="swipe_pager">Glisser (Pager)</string>
+    <string name="bottom_bar">Barre inférieure</string>
+
+    <string name="welcome_title">VoltGuard</string>
+    <string name="welcome_subtitle">Configurons votre moniteur de batterie</string>
+    <string name="alert_thresholds">Seuils d\'alerte</string>
+    <string name="low_alert">Alerte basse : %.0f%%</string>
+    <string name="high_alert">Alerte haute : %.0f%%</string>
+    <string name="navigation">Navigation</string>
+    <string name="continue_btn">Continuer</string>
+    <string name="skip_setup">Passer la configuration</string>
+
+    <string name="status">Statut</string>
+    <string name="charging">En charge</string>
+    <string name="full">Pleine</string>
+    <string name="discharging">Décharge</string>
+    <string name="temperature">Température</string>
+    <string name="voltage">Tension</string>
+    <string name="power_source">Source d\'alimentation</string>
+    <string name="ac">Secteur</string>
+    <string name="usb">USB</string>
+    <string name="wireless">Sans fil</string>
+    <string name="battery_health">Santé de la batterie</string>
+    <string name="health">Santé</string>
+    <string name="good">Bonne</string>
+    <string name="overheat">Surchauffe</string>
+    <string name="dead">Épuisée</string>
+    <string name="technology">Technologie</string>
+    <string name="capacity">Capacité</string>
+    <string name="current">Courant</string>
+    <string name="cycles">Cycles</string>
+    <string name="percent_symbol">%</string>
+
+    <string name="time_to_full">Temps restant jusqu\'à pleine</string>
+    <string name="time_to_empty">Temps restant jusqu\'à vide</string>
+    <string name="charge_speed">Vitesse de charge</string>
+    <string name="discharge_speed">Vitesse de décharge</string>
+    <string name="charge_added">Charge ajoutée</string>
+    <string name="discharged">Déchargée</string>
+    <string name="real_time">Temps réel</string>
+    <string name="estimated_capacity">Estimée</string>
+    <string name="design_capacity">Conception</string>
+    <string name="health_percent">%s%% de santé</string>
+    <string name="daily_usage">Utilisation quotidienne</string>
+    <string name="percent_charged">%s%% chargée</string>
+    <string name="used_charged_format">Utilisé : %s%% | Chargé : %s%%</string>
+    <string name="screen_on">écran allumé</string>
+
+    <string name="settings_title">Paramètres</string>
+    <string name="language">Langue</string>
+    <string name="service_title">Service</string>
+    <string name="background_service">Service en arrière-plan</string>
+    <string name="service_desc">Surveille la batterie en arrière-plan, envoie des alertes push et suit les sessions de charge</string>
+    <string name="notifications">Notifications</string>
+    <string name="alert_notifications">Notifications d\'alerte</string>
+    <string name="low_alert_setting">Alerte basse</string>
+    <string name="high_alert_setting">Alerte haute</string>
+    <string name="notification_summary">Batterie %d%% : notification push&#10;Batterie %d%% : notification push</string>
+    <string name="about_app">À propos de cette app</string>
+    <string name="ver">Version</string>
+    <string name="min_sdk">SDK min</string>
+    <string name="min_sdk_val">24 (Android 7.0)</string>
+    <string name="target_sdk">SDK cible</string>
+
+    <string name="about_title">À propos</string>
+    <string name="about_description" formatted="false">VoltGuard surveille votre batterie en temps réel : niveau de charge, température, tension, santé et nombre de cycles. Le service en arrière-plan envoie des alertes lorsque la charge atteint 20 % ou 80 %.</string>
+    <string name="features">Fonctionnalités</string>
+    <string name="features_desc">\u2022 Statistiques en direct avec interface animée&#10;\u2022 Service au premier plan avec notifications&#10;\u2022 Santé de la batterie et nombre de cycles&#10;\u2022 Alertes de seuil (20 % / 80 %)&#10;\u2022 Indicateur pulsant pendant la charge</string>
+    <string name="tech_stack">Technologies</string>
+    <string name="tech_stack_desc">Kotlin \u00B7 Jetpack Compose \u00B7 Material 3&#10;MVVM \u00B7 StateFlow \u00B7 Service au premier plan</string>
+    <string name="license_title">Licence</string>
+    <string name="license_desc">GNU General Public License v3.0&#10;Logiciel libre et open source.</string>
+    <string name="view_on_github">Voir sur GitHub</string>
+    <string name="check_updates">Vérifier les mises à jour</string>
+    <string name="checking">Vérification des mises à jour…</string>
+    <string name="up_to_date">Vous êtes à jour</string>
+    <string name="update_available">Mise à jour disponible : v%s</string>
+    <string name="download_update">Télécharger</string>
+    <string name="update_error">Impossible de vérifier les mises à jour</string>
+    <string name="downloading">Téléchargement…</string>
+
+    <string name="battery_high_title">Batterie haute</string>
+    <string name="battery_high_body">La batterie a atteint %d%% en charge.</string>
+    <string name="battery_low_title">Batterie faible</string>
+    <string name="battery_low_body">La batterie est descendue à %d%%.</string>
+    <string name="channel_status_name">Statut de la batterie</string>
+    <string name="channel_status_desc">Notification persistante de l\'état de la batterie</string>
+    <string name="channel_alerts_name">Alertes batterie</string>
+    <string name="channel_alerts_desc">Notifications pour les seuils d\'alerte de la batterie</string>
+    <string name="service_notif_title">VoltGuard</string>
+    <string name="service_notif_body">Batterie : %d%%</string>
+
+    <string name="unit_celsius">°C</string>
+    <string name="unit_mv">mV</string>
+    <string name="unit_mah">mAh</string>
+    <string name="unit_ma">mA</string>
+    <string name="unit_percent_h">%/h</string>
+
+    <string name="widget_percent">%</string>
+
+    <string name="recommendations">Recommandations</string>
+    <string name="rec_scorch_t">Température extrême</string>
+    <string name="rec_scorch_d">Débranchez immédiatement et laissez la batterie refroidir</string>
+    <string name="rec_hot_t">La batterie est chaude</string>
+    <string name="rec_hot_d">Retirez la coque et évitez une utilisation intensive pendant la charge</string>
+    <string name="rec_dead_t">Batterie épuisée</string>
+    <string name="rec_dead_d">Envisagez de remplacer la batterie dès que possible</string>
+    <string name="rec_overheat_t">Surchauffe détectée</string>
+    <string name="rec_overheat_d">Laissez l\'appareil refroidir avant de l\'utiliser à nouveau</string>
+    <string name="rec_full_t">Batterie pleine</string>
+    <string name="rec_full_d">Débranchez le chargeur pour préserver la santé de la batterie</string>
+    <string name="rec_opt80_t">Charge optimale</string>
+    <string name="rec_opt80_d">80 % suffisent pour une utilisation quotidienne — débranchez pour prolonger la durée de vie de la batterie</string>
+    <string name="rec_critical_t">Niveau critique</string>
+    <string name="rec_critical_d">Branchez votre chargeur immédiatement</string>
+    <string name="rec_low_t">Batterie faible</string>
+    <string name="rec_low_d">Envisagez de charger bientôt pour éviter l\'extinction</string>
+    <string name="rec_drain_t">Décharge rapide</string>
+    <string name="rec_drain_d">Vérifiez les applications en arrière-plan ou un signal faible qui épuisent votre batterie</string>
+    <string name="rec_cycles_t">Cycles nombreux</string>
+    <string name="rec_cycles_d">La batterie a plus de 800 cycles — une perte de capacité est normale</string>
+</resources>

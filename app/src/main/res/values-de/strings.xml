@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VoltGuard</string>
+    <string name="version">1.0.0-beta.2</string>
+
+    <string name="nav_battery">Akku</string>
+    <string name="nav_accu">Accu</string>
+    <string name="nav_settings">Einstellungen</string>
+    <string name="nav_about">Über</string>
+
+    <string name="na">N/A</string>
+    <string name="swipe_pager">Wischen (Pager)</string>
+    <string name="bottom_bar">Untere Leiste</string>
+
+    <string name="welcome_title">VoltGuard</string>
+    <string name="welcome_subtitle">Richten Sie Ihren Akku-Monitor ein</string>
+    <string name="alert_thresholds">Alarmgrenzen</string>
+    <string name="low_alert">Niedrig: %.0f%%</string>
+    <string name="high_alert">Hoch: %.0f%%</string>
+    <string name="navigation">Navigation</string>
+    <string name="continue_btn">Weiter</string>
+    <string name="skip_setup">Überspringen</string>
+
+    <string name="status">Status</string>
+    <string name="charging">Lädt</string>
+    <string name="full">Voll</string>
+    <string name="discharging">Entlädt</string>
+    <string name="temperature">Temperatur</string>
+    <string name="voltage">Spannung</string>
+    <string name="power_source">Stromquelle</string>
+    <string name="ac">Netz</string>
+    <string name="usb">USB</string>
+    <string name="wireless">Kabellos</string>
+    <string name="battery_health">Akku-Zustand</string>
+    <string name="health">Zustand</string>
+    <string name="good">Gut</string>
+    <string name="overheat">Überhitzt</string>
+    <string name="dead">Defekt</string>
+    <string name="technology">Technologie</string>
+    <string name="capacity">Kapazität</string>
+    <string name="current">Strom</string>
+    <string name="cycles">Zyklen</string>
+    <string name="percent_symbol">%</string>
+
+    <string name="time_to_full">Bis voll</string>
+    <string name="time_to_empty">Bis leer</string>
+    <string name="charge_speed">Ladegeschw.</string>
+    <string name="discharge_speed">Entladegeschw.</string>
+    <string name="charge_added">Geladen</string>
+    <string name="discharged">Entladen</string>
+    <string name="real_time">Echtzeit</string>
+    <string name="estimated_capacity">Geschätzt</string>
+    <string name="design_capacity">Design</string>
+    <string name="health_percent">%s%% Gesundheit</string>
+    <string name="daily_usage">Tägliche Nutzung</string>
+    <string name="percent_charged">%s%% geladen</string>
+    <string name="used_charged_format">Genutzt: %s%% | Geladen: %s%%</string>
+    <string name="screen_on">Bildschirm an</string>
+
+    <string name="settings_title">Einstellungen</string>
+    <string name="language">Sprache</string>
+    <string name="service_title">Dienst</string>
+    <string name="background_service">Hintergrunddienst</string>
+    <string name="service_desc">Überwacht den Akku im Hintergrund, sendet Push-Benachrichtigungen und zeichnet Ladevorgänge auf</string>
+    <string name="notifications">Benachrichtigungen</string>
+    <string name="alert_notifications">Alarme</string>
+    <string name="low_alert_setting">Niedrige Schwelle</string>
+    <string name="high_alert_setting">Hohe Schwelle</string>
+    <string name="notification_summary">Akku %d%%: Push-Benachrichtigung&#10;Akku %d%%: Push-Benachrichtigung</string>
+    <string name="about_app">Über diese App</string>
+    <string name="ver">Version</string>
+    <string name="min_sdk">Min SDK</string>
+    <string name="min_sdk_val">24 (Android 7.0)</string>
+    <string name="target_sdk">Target SDK</string>
+
+    <string name="about_title">Über</string>
+    <string name="about_description" formatted="false">VoltGuard überwacht Ihren Akku in Echtzeit: Ladestand, Temperatur, Spannung, Zustand und Zyklenzahl. Der Hintergrunddienst sendet Benachrichtigungen bei 20% oder 80%.</string>
+    <string name="features">Funktionen</string>
+    <string name="features_desc">\u2022 Live-Akkuwerte mit animierter UI&#10;\u2022 Hintergrunddienst mit Benachrichtigungen&#10;\u2022 Akku-Zustand und Zyklen&#10;\u2022 Grenzwert-Alarme (20% / 80%)&#10;\u2022 Pulsierender Indikator beim Laden</string>
+    <string name="tech_stack">Technologien</string>
+    <string name="tech_stack_desc">Kotlin \u00B7 Jetpack Compose \u00B7 Material 3&#10;MVVM \u00B7 StateFlow \u00B7 Foreground Service</string>
+    <string name="license_title">Lizenz</string>
+    <string name="license_desc">GNU General Public License v3.0&#10;Freie und quelloffene Software.</string>
+    <string name="view_on_github">Auf GitHub ansehen</string>
+    <string name="check_updates">Nach Updates suchen</string>
+    <string name="checking">Suche nach Updates…</string>
+    <string name="up_to_date">Sie sind auf dem neuesten Stand</string>
+    <string name="update_available">Update verfügbar: v%s</string>
+    <string name="download_update">Herunterladen</string>
+    <string name="update_error">Update-Prüfung fehlgeschlagen</string>
+    <string name="downloading">Lade herunter…</string>
+
+    <string name="battery_high_title">Akku hoch</string>
+    <string name="battery_high_body">Akku hat %d%% beim Laden erreicht.</string>
+    <string name="battery_low_title">Akku niedrig</string>
+    <string name="battery_low_body">Akku auf %d%% gefallen.</string>
+    <string name="channel_status_name">Akku-Status</string>
+    <string name="channel_status_desc">Dauerhafte Akku-Statusbenachrichtigung</string>
+    <string name="channel_alerts_name">Akku-Alarme</string>
+    <string name="channel_alerts_desc">Benachrichtigungen für Akku-Grenzwerte</string>
+    <string name="service_notif_title">VoltGuard</string>
+    <string name="service_notif_body">Akku: %d%%</string>
+
+    <string name="unit_celsius">°C</string>
+    <string name="unit_mv">mV</string>
+    <string name="unit_mah">mAh</string>
+    <string name="unit_ma">mA</string>
+    <string name="unit_percent_h">%/h</string>
+
+    <string name="widget_percent">%</string>
+
+    <string name="recommendations">Empfehlungen</string>
+    <string name="rec_scorch_t">Extreme Temperatur</string>
+    <string name="rec_scorch_d">Sofort vom Ladegerät trennen und Akku abkühlen lassen</string>
+    <string name="rec_hot_t">Akku ist heiß</string>
+    <string name="rec_hot_d">Hülle entfernen und intensive Nutzung während des Ladens vermeiden</string>
+    <string name="rec_dead_t">Akku defekt</string>
+    <string name="rec_dead_d">Akku so schnell wie möglich ersetzen</string>
+    <string name="rec_overheat_t">Überhitzung erkannt</string>
+    <string name="rec_overheat_d">Gerät abkühlen lassen, bevor Sie es wieder verwenden</string>
+    <string name="rec_full_t">Akku ist voll</string>
+    <string name="rec_full_d">Ladegerät abziehen, um die Akku-Lebensdauer zu schonen</string>
+    <string name="rec_opt80_t">Optimale Ladung</string>
+    <string name="rec_opt80_d">80% reichen für den täglichen Gebrauch — abziehen verlängert die Lebensdauer</string>
+    <string name="rec_critical_t">Kritisch niedrig</string>
+    <string name="rec_critical_d">Ladegerät sofort anschließen</string>
+    <string name="rec_low_t">Akku ist niedrig</string>
+    <string name="rec_low_d">Bald aufladen, um Abschaltung zu vermeiden</string>
+    <string name="rec_drain_t">Schnelle Entladung</string>
+    <string name="rec_drain_d">Hintergrund-Apps oder schlechter Empfang könnten den Akku belasten</string>
+    <string name="rec_cycles_t">Viele Zyklen</string>
+    <string name="rec_cycles_d">Über 800 Zyklen — Kapazitätsverlust ist normal</string>
+</resources>

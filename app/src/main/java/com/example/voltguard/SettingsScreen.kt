@@ -102,7 +102,13 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
         SettingsCard(title = stringResource(R.string.language)) {
             val langOptions = listOf(
                 "English" to "en",
-                "Русский" to "ru"
+                "Русский" to "ru",
+                "Deutsch" to "de",
+                "Français" to "fr",
+                "Español" to "es",
+                "Italiano" to "it",
+                "中文" to "zh",
+                "Polski" to "pl"
             )
             langOptions.forEach { (label, value) ->
                 Row(
