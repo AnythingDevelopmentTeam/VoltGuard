@@ -156,11 +156,16 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
 
         Spacer(modifier = Modifier.height(12.dp))
 
+        val notificationsEnabled = serviceRunning && alertsEnabled
+
         SettingsCard(title = stringResource(R.string.notifications)) {
+            val alpha = if (serviceRunning) 1f else 0.5f
+
             SettingsRow(label = stringResource(R.string.alert_notifications)) {
                 Switch(
                     checked = alertsEnabled,
-                    onCheckedChange = { settings.setAlertsEnabled(it) }
+                    onCheckedChange = { settings.setAlertsEnabled(it) },
+                    enabled = serviceRunning
                 )
             }
 
@@ -171,7 +176,7 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
                     text = "$lowThreshold%",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = alpha)
                 )
             }
 
@@ -180,6 +185,7 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
                 onValueChange = { settings.setLowThreshold(it.toInt()) },
                 valueRange = 5f..40f,
                 steps = 34,
+                enabled = notificationsEnabled,
                 colors = SliderDefaults.colors(
                     thumbColor = MaterialTheme.colorScheme.primary,
                     activeTrackColor = MaterialTheme.colorScheme.primary
@@ -193,7 +199,7 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
                     text = "$highThreshold%",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = alpha)
                 )
             }
 
@@ -202,6 +208,7 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
                 onValueChange = { settings.setHighThreshold(it.toInt()) },
                 valueRange = 60f..95f,
                 steps = 34,
+                enabled = notificationsEnabled,
                 colors = SliderDefaults.colors(
                     thumbColor = MaterialTheme.colorScheme.primary,
                     activeTrackColor = MaterialTheme.colorScheme.primary
@@ -213,7 +220,7 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
             Text(
                 text = stringResource(R.string.notification_summary, lowThreshold, highThreshold),
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha),
                 lineHeight = 18.sp
             )
         }

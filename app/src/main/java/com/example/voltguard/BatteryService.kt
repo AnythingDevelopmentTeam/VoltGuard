@@ -10,7 +10,6 @@ import android.content.IntentFilter
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
-import kotlin.math.abs
 
 class BatteryService : Service() {
 
@@ -141,7 +140,7 @@ class BatteryService : Service() {
             .build()
 
         val manager = getSystemService(NotificationManager::class.java)
-        manager.notify(abs(message.hashCode()), notification)
+        manager.notify(message.hashCode() and 0x7FFFFFFF, notification)
     }
 
     private fun buildMainActivityPendingIntent(): PendingIntent {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">VoltGuard</string>
-    <string name="version">2.0.0-alpha.3</string>
+    <string name="version">1.0.0-beta.1</string>
 
     <!-- Navigation -->
     <string name="nav_battery">Battery</string>

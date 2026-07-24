@@ -60,7 +60,7 @@ private fun updateAppWidget(context: Context, manager: AppWidgetManager, id: Int
 
     views.setTextViewText(R.id.widget_level, "$level")
 
-    val unitText = if (isCharging) "% ⚡" else "%"
+    val unitText = if (isCharging) "${context.getString(R.string.widget_percent)} ⚡" else context.getString(R.string.widget_percent)
     views.setTextViewText(R.id.widget_unit, unitText)
 
     manager.updateAppWidget(id, views)

@@ -15,12 +15,13 @@ object ApkDownloader {
 
     suspend fun downloadAndInstall(context: Context, apkUrl: String): Boolean = withContext(Dispatchers.IO) {
         try {
-            val input = URL(apkUrl).openStream()
             val file = File(context.cacheDir, "update.apk")
-            FileOutputStream(file).use { output ->
-                input.copyTo(output)
+            val input = URL(apkUrl).openStream()
+            input.use { stream ->
+                FileOutputStream(file).use { output ->
+                    stream.copyTo(output)
+                }
             }
-            input.close()
 
             val uri = FileProvider.getUriForFile(
                 context,

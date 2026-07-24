@@ -49,7 +49,7 @@ import kotlinx.coroutines.launch
 fun AboutScreen(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val currentVersion = stringResource(R.string.version)
+    val currentVersion = BuildConfig.VERSION_NAME
     var updateDialog by remember { mutableStateOf<UpdateDialogState?>(null) }
 
     Column(
@@ -71,7 +71,7 @@ fun AboutScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(4.dp))
 
         Text(
-            text = "v${stringResource(R.string.version)}",
+            text = "v${BuildConfig.VERSION_NAME}",
             fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -217,7 +217,7 @@ fun AboutScreen(modifier: Modifier = Modifier) {
                         scope.launch {
                             updateDialog = UpdateDialogState.Downloading
                             val ok = ApkDownloader.downloadAndInstall(context, state.info.apkUrl)
-                            if (!ok) updateDialog = null
+                            updateDialog = if (ok) null else UpdateDialogState.UpToDate
                         }
                     }) {
                         Text(stringResource(R.string.download_update))

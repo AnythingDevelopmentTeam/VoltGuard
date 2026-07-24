@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">VoltGuard</string>
-    <string name="version">2.0.0-alpha.3</string>
+    <string name="version">1.0.0-beta.1</string>
 
     <!-- Navigation -->
     <string name="nav_battery">Батарея</string>
@@ -39,7 +39,7 @@
     <string name="health">Здоровье</string>
     <string name="good">Хорошее</string>
     <string name="overheat">Перегрев</string>
-    <string name="dead">Разряжен</string>
+    <string name="dead">Неисправна</string>
     <string name="technology">Технология</string>
     <string name="capacity">Ёмкость</string>
     <string name="current">Ток</string>

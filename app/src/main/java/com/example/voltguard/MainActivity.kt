@@ -63,9 +63,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.voltguard.ui.theme.VoltGuardTheme
 
@@ -82,7 +79,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        hideSystemBars()
         requestNotificationPermission()
         setContent {
             VoltGuardTheme {
@@ -103,14 +99,6 @@ class MainActivity : ComponentActivity() {
                 AutoUpdateDialog()
             }
         }
-    }
-
-    private fun hideSystemBars() {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        val controller = WindowInsetsControllerCompat(window, window.decorView)
-        controller.hide(WindowInsetsCompat.Type.systemBars())
-        controller.systemBarsBehavior =
-            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     }
 
     private fun requestNotificationPermission() {
@@ -297,10 +285,12 @@ private fun AutoUpdateDialog() {
         val prefs = context.getSharedPreferences("voltguard_prefs", Context.MODE_PRIVATE)
         val lastCheck = prefs.getLong("last_update_check", 0)
         if (System.currentTimeMillis() - lastCheck < 86400000) return@LaunchedEffect
-        prefs.edit().putLong("last_update_check", System.currentTimeMillis()).apply()
-        val current = context.getString(R.string.version)
+        val current = BuildConfig.VERSION_NAME
         val result = UpdateChecker.check(current)
-        if (result.isNewer) updateInfo = result
+        if (result.isNewer) {
+            prefs.edit().putLong("last_update_check", System.currentTimeMillis()).apply()
+            updateInfo = result
+        }
     }
 
     if (downloading) {
