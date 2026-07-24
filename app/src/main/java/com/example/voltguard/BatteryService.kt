@@ -15,8 +15,8 @@ import kotlin.math.abs
 class BatteryService : Service() {
 
     private var batteryReceiver: BatteryReceiver? = null
-    private var lastNotifiedLevel = -1
-    private var lastWasCharging = false
+    private var notifiedHigh = false
+    private var notifiedLow = false
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -64,22 +64,32 @@ class BatteryService : Service() {
         val highThreshold = settings.highThreshold.value
         val isCharging = info.status == "Charging" || info.status == "Full"
 
-        if (info.level >= highThreshold && isCharging && !lastWasCharging) {
-            sendThresholdNotification(
-                title = getString(R.string.battery_high_title),
-                message = getString(R.string.battery_high_body, info.level)
-            )
+        if (info.level >= highThreshold && !notifiedHigh) {
+            notifiedHigh = true
+            notifiedLow = false
+            if (isCharging) {
+                sendThresholdNotification(
+                    title = getString(R.string.battery_high_title),
+                    message = getString(R.string.battery_high_body, info.level)
+                )
+            }
         }
 
-        if (info.level <= lowThreshold && !isCharging && lastWasCharging) {
-            sendThresholdNotification(
-                title = getString(R.string.battery_low_title),
-                message = getString(R.string.battery_low_body, info.level)
-            )
+        if (info.level <= lowThreshold && !notifiedLow) {
+            notifiedLow = true
+            notifiedHigh = false
+            if (!isCharging) {
+                sendThresholdNotification(
+                    title = getString(R.string.battery_low_title),
+                    message = getString(R.string.battery_low_body, info.level)
+                )
+            }
         }
 
-        lastWasCharging = isCharging
-        lastNotifiedLevel = info.level
+        if (info.level in (lowThreshold + 1) until highThreshold) {
+            notifiedHigh = false
+            notifiedLow = false
+        }
     }
 
     private fun createNotificationChannels() {
