@@ -5,9 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class BatteryReceiver(
     private val onBatteryChanged: (BatteryInfo) -> Unit
@@ -17,9 +14,7 @@ class BatteryReceiver(
         if (intent.action != Intent.ACTION_BATTERY_CHANGED) return
         val info = parseBatteryIntent(intent)
         onBatteryChanged(info)
-        CoroutineScope(Dispatchers.IO).launch {
-            BatteryWidget.updateWidget(context, info)
-        }
+        BatteryWidgetProvider.updateWidget(context, info)
     }
 
     companion object {

@@ -5,6 +5,6 @@
     android:targetCellWidth="2"
     android:targetCellHeight="2"
     android:updatePeriodMillis="0"
-    android:initialLayout="@layout/battery_widget_layout"
+    android:initialLayout="@layout/battery_widget_remote"
     android:resizeMode="none"
     android:widgetCategory="home_screen" />

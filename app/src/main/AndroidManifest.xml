@@ -39,10 +39,11 @@
         </service>
 
         <receiver
-            android:name=".BatteryWidgetReceiver"
+            android:name=".BatteryWidgetProvider"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.example.voltguard.UPDATE_WIDGET" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
