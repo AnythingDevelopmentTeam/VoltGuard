@@ -81,11 +81,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         requestNotificationPermission()
         setContent {
-            VoltGuardTheme {
-                val context = LocalContext.current
-                val settings = SettingsManager.getInstance(context)
-                val firstLaunchDone by settings.firstLaunchDone.collectAsState()
-                val navigationStyle by settings.navigationStyle.collectAsState()
+            val context = LocalContext.current
+            val settings = SettingsManager.getInstance(context)
+            val firstLaunchDone by settings.firstLaunchDone.collectAsState()
+            val navigationStyle by settings.navigationStyle.collectAsState()
+            val darkTheme by settings.darkTheme.collectAsState()
+
+            VoltGuardTheme(darkTheme = darkTheme) {
 
                 if (firstLaunchDone) {
                     when (navigationStyle) {

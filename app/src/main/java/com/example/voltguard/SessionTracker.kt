@@ -195,6 +195,12 @@ class SessionTracker(context: Context) {
         return sb.toString()
     }
 
+    fun clearAllSessions() {
+        prefs.edit().putString(KEY_SESSIONS, "[]").apply()
+        currentSession = null
+        lastLevel = -1
+    }
+
     private fun saveSession(session: BatterySession) {
         val json = sessionToJson(session)
         val array = loadSessionArray()

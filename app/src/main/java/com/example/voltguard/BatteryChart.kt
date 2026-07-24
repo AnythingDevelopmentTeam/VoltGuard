@@ -15,6 +15,8 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import org.json.JSONArray
 import org.json.JSONObject
@@ -93,26 +95,38 @@ fun BatteryChart(
 
     val lineColor = MaterialTheme.colorScheme.primary
     val gridColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+    val labelColor = MaterialTheme.colorScheme.onSurfaceVariant
+    val density = LocalDensity.current
 
     Canvas(
         modifier = modifier
             .fillMaxWidth()
             .height(160.dp)
-            .padding(start = 8.dp, end = 8.dp)
+            .padding(start = 24.dp, end = 8.dp, bottom = 16.dp)
     ) {
+        val textPaint = android.graphics.Paint().apply {
+            color = labelColor.hashCode()
+            textSize = with(density) { 10.dp.toPx() }
+            textAlign = android.graphics.Paint.Align.CENTER
+        }
+        val levelPaint = android.graphics.Paint().apply {
+            color = labelColor.copy(alpha = 0.6f).hashCode()
+            textSize = with(density) { 9.dp.toPx() }
+            textAlign = android.graphics.Paint.Align.RIGHT
+        }
+
         val minLevel = 0f
         val maxLevel = 100f
         val chartWidth = size.width
         val chartHeight = size.height
-        val paddingTop = 8f
-        val paddingBottom = 8f
-        val drawHeight = chartHeight - paddingTop - paddingBottom
+        val paddingTop = 4f
+        val drawHeight = chartHeight - paddingTop
 
         val timeStart = points.first().timestamp
         val timeEnd = points.last().timestamp
         val timeRange = (timeEnd - timeStart).coerceAtLeast(1L).toFloat()
 
-        // horizontal grid lines
+        // horizontal grid lines + level labels
         val gridLevels = listOf(0f, 25f, 50f, 75f, 100f)
         for (level in gridLevels) {
             val y = paddingTop + drawHeight * (1f - (level - minLevel) / (maxLevel - minLevel))
@@ -122,6 +136,31 @@ fun BatteryChart(
                 end = Offset(chartWidth, y),
                 strokeWidth = 1f
             )
+            drawContext.canvas.nativeCanvas.drawText(
+                "${level.toInt()}",
+                -4f, y + 4f, levelPaint
+            )
+        }
+
+        // time labels
+        val intervalHours = if (timeRange > 24 * 3600_000L) 6 else 3
+        val intervalMs = intervalHours * 3600_000L
+        val firstHour = (timeStart / intervalMs) * intervalMs
+        var labelTime = firstHour + intervalMs
+        while (labelTime < timeEnd) {
+            val x = ((labelTime - timeStart) / timeRange) * chartWidth
+            drawLine(
+                color = gridColor.copy(alpha = 0.15f),
+                start = Offset(x, paddingTop),
+                end = Offset(x, chartHeight),
+                strokeWidth = 1f
+            )
+            val sdf = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault())
+            drawContext.canvas.nativeCanvas.drawText(
+                sdf.format(java.util.Date(labelTime)),
+                x, chartHeight + with(density) { 12.dp.toPx() }, textPaint
+            )
+            labelTime += intervalMs
         }
 
         // line path

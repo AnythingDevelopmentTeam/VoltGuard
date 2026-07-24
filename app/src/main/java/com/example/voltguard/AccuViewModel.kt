@@ -81,6 +81,11 @@ class AccuViewModel(application: Application) : AndroidViewModel(application) {
         return sessionTracker.getRecentSessions(50)
     }
 
+    fun clearSessions() {
+        sessionTracker.clearAllSessions()
+        refresh()
+    }
+
     fun exportCsv(): Intent {
         val csv = sessionTracker.generateCsv()
         val ctx = getApplication<Application>()

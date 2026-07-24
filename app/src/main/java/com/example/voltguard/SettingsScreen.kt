@@ -1,6 +1,7 @@
 package com.example.voltguard
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Slider
@@ -49,6 +51,12 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
     val language by settings.language.collectAsState()
     val recommendationsEnabled by settings.recommendationsEnabled.collectAsState()
     val fullChargeReminder by settings.fullChargeReminder.collectAsState()
+    val darkTheme by settings.darkTheme.collectAsState()
+    val quietHoursEnabled by settings.quietHoursEnabled.collectAsState()
+    val quietHoursStart by settings.quietHoursStart.collectAsState()
+    val quietHoursEnd by settings.quietHoursEnd.collectAsState()
+    val alertSound by settings.alertSound.collectAsState()
+    val alertVibrate by settings.alertVibrate.collectAsState()
 
     Column(
         modifier = modifier
@@ -142,6 +150,17 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        SettingsCard(title = stringResource(R.string.appearance)) {
+            SettingsRow(label = stringResource(R.string.dark_theme)) {
+                Switch(
+                    checked = darkTheme,
+                    onCheckedChange = { settings.setDarkTheme(it) }
+                )
             }
         }
 
@@ -254,6 +273,74 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
                     enabled = serviceRunning
                 )
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(12.dp))
+
+            SettingsRow(label = stringResource(R.string.alert_sound)) {
+                Switch(
+                    checked = alertSound,
+                    onCheckedChange = { settings.setAlertSound(it) },
+                    enabled = serviceRunning
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            SettingsRow(label = stringResource(R.string.alert_vibrate)) {
+                Switch(
+                    checked = alertVibrate,
+                    onCheckedChange = { settings.setAlertVibrate(it) },
+                    enabled = serviceRunning
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        SettingsCard(title = stringResource(R.string.quiet_hours)) {
+            SettingsRow(label = stringResource(R.string.quiet_hours)) {
+                Switch(
+                    checked = quietHoursEnabled,
+                    onCheckedChange = { settings.setQuietHoursEnabled(it) }
+                )
+            }
+
+            if (quietHoursEnabled) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = stringResource(R.string.quiet_hours_start),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = quietHoursStart,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = stringResource(R.string.quiet_hours_end),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = quietHoursEnd,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -285,6 +372,45 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(
+                    onClick = {
+                        val json = settings.exportSettings()
+                        val file = java.io.File(context.cacheDir, "voltguard_settings.json")
+                        file.writeText(json)
+                        val uri = androidx.core.content.FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+                        val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                            type = "application/json"
+                            putExtra(android.content.Intent.EXTRA_STREAM, uri)
+                            addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        }
+                        context.startActivity(android.content.Intent.createChooser(intent, null))
+                    },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(stringResource(R.string.backup_settings), maxLines = 1)
+                }
+
+                OutlinedButton(
+                    onClick = {
+                        val intent = android.content.Intent(android.content.Intent.ACTION_OPEN_DOCUMENT).apply {
+                            addCategory(android.content.Intent.CATEGORY_OPENABLE)
+                            type = "application/json"
+                        }
+                        context.startActivity(intent)
+                    },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(stringResource(R.string.restore_settings), maxLines = 1)
+                }
             }
         }
 

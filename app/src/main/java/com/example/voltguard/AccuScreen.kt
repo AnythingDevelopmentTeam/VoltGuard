@@ -24,16 +24,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,6 +67,7 @@ fun AccuScreen(
     val history by accuViewModel.history.collectAsState()
     val dailyUsage by accuViewModel.dailyUsage.collectAsState()
     val chartPoints by accuViewModel.chartPoints.collectAsState()
+    val showClearDialog = remember { mutableStateOf(false) }
 
     LaunchedEffect(batteryInfo) {
         accuViewModel.onBatteryChanged(batteryInfo)
@@ -294,6 +299,37 @@ fun AccuScreen(
             shape = RoundedCornerShape(12.dp)
         ) {
             Text(stringResource(R.string.export_csv))
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        OutlinedButton(
+            onClick = { showClearDialog.value = true },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text(stringResource(R.string.clear_sessions))
+        }
+
+        if (showClearDialog.value) {
+            AlertDialog(
+                onDismissRequest = { showClearDialog.value = false },
+                title = { Text(stringResource(R.string.clear_sessions)) },
+                text = { Text(stringResource(R.string.clear_sessions_confirm)) },
+                confirmButton = {
+                    TextButton(onClick = {
+                        accuViewModel.clearSessions()
+                        showClearDialog.value = false
+                    }) {
+                        Text(stringResource(R.string.confirm))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showClearDialog.value = false }) {
+                        Text(stringResource(R.string.cancel))
+                    }
+                }
+            )
         }
 
         Spacer(modifier = Modifier.height(48.dp))

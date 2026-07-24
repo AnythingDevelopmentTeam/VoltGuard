@@ -61,6 +61,7 @@ class BatteryService : Service() {
     private fun checkThresholdAndNotify(info: BatteryInfo) {
         val settings = SettingsManager.getInstance(this)
         if (!settings.alertsEnabled.value) return
+        if (settings.isInQuietHours()) return
 
         val lowThreshold = settings.lowThreshold.value
         val highThreshold = settings.highThreshold.value
@@ -165,15 +166,19 @@ class BatteryService : Service() {
     }
 
     private fun sendThresholdNotification(title: String, message: String, channelId: String = CHANNEL_ALERT) {
-        val notification = NotificationCompat.Builder(this, channelId)
+        val settings = SettingsManager.getInstance(this)
+        val builder = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_notification_battery)
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .setContentIntent(buildMainActivityPendingIntent())
-            .build()
 
+        if (!settings.alertSound.value) builder.setSound(null)
+        if (!settings.alertVibrate.value) builder.setVibrate(null)
+
+        val notification = builder.build()
         val manager = getSystemService(NotificationManager::class.java)
         manager.notify(message.hashCode() and 0x7FFFFFFF, notification)
     }

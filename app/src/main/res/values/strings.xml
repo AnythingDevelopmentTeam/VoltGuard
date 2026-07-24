@@ -63,6 +63,10 @@
     <string name="screen_on">screen on</string>
     <string name="export_csv">Export CSV</string>
     <string name="export_csv_success">Sessions exported</string>
+    <string name="clear_sessions">Clear sessions</string>
+    <string name="clear_sessions_confirm">All session data will be deleted. Continue?</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
     <string name="chart_24h">24h Battery Level</string>
 
     <!-- SettingsScreen -->
@@ -85,6 +89,8 @@
     <string name="min_sdk">Min SDK</string>
     <string name="min_sdk_val">24 (Android 7.0)</string>
     <string name="target_sdk">Target SDK</string>
+    <string name="appearance">Appearance</string>
+    <string name="dark_theme">Dark theme</string>
 
     <!-- AboutScreen -->
     <string name="about_title">About</string>
@@ -149,4 +155,19 @@
     <string name="rec_drain_d">Check for background apps or poor signal draining your battery</string>
     <string name="rec_cycles_t">Many cycles</string>
     <string name="rec_cycles_d">Battery has over 800 cycles — capacity loss is expected</string>
+
+    <!-- Quiet hours -->
+    <string name="quiet_hours">Quiet hours</string>
+    <string name="quiet_hours_start">Start</string>
+    <string name="quiet_hours_end">End</string>
+
+    <!-- Alert settings -->
+    <string name="alert_sound">Alert sound</string>
+    <string name="alert_vibrate">Alert vibration</string>
+
+    <!-- Backup -->
+    <string name="backup_settings">Backup settings</string>
+    <string name="restore_settings">Restore settings</string>
+    <string name="backup_success">Settings backed up</string>
+    <string name="restore_success">Settings restored</string>
 </resources>
