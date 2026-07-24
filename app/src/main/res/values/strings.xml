@@ -118,4 +118,27 @@
 
     <!-- BatteryWidget -->
     <string name="widget_percent">%</string>
+
+    <!-- Recommendations -->
+    <string name="recommendations">Recommendations</string>
+    <string name="rec_scorch_t">Extreme temperature</string>
+    <string name="rec_scorch_d">Unplug immediately and let the battery cool down</string>
+    <string name="rec_hot_t">Battery is hot</string>
+    <string name="rec_hot_d">Remove case and avoid heavy usage while charging</string>
+    <string name="rec_dead_t">Battery is dead</string>
+    <string name="rec_dead_d">Consider replacing the battery as soon as possible</string>
+    <string name="rec_overheat_t">Overheat detected</string>
+    <string name="rec_overheat_d">Let the device cool down before using it again</string>
+    <string name="rec_full_t">Battery is full</string>
+    <string name="rec_full_d">Unplug the charger to preserve battery health</string>
+    <string name="rec_opt80_t">Optimal charging</string>
+    <string name="rec_opt80_d">80% is enough for daily use — unplug to extend battery lifespan</string>
+    <string name="rec_critical_t">Critically low</string>
+    <string name="rec_critical_d">Plug in your charger immediately</string>
+    <string name="rec_low_t">Battery is low</string>
+    <string name="rec_low_d">Consider charging soon to avoid shutdown</string>
+    <string name="rec_drain_t">Fast discharge</string>
+    <string name="rec_drain_d">Check for background apps or poor signal draining your battery</string>
+    <string name="rec_cycles_t">Many cycles</string>
+    <string name="rec_cycles_d">Battery has over 800 cycles — capacity loss is expected</string>
 </resources>

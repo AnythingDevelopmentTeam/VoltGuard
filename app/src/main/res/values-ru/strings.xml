@@ -118,4 +118,27 @@
 
     <!-- BatteryWidget -->
     <string name="widget_percent">%</string>
+
+    <!-- Recommendations -->
+    <string name="recommendations">Рекомендации</string>
+    <string name="rec_scorch_t">Экстремальная температура</string>
+    <string name="rec_scorch_d">Немедленно отключи зарядку и дай батарее остыть</string>
+    <string name="rec_hot_t">Батарея нагрелась</string>
+    <string name="rec_hot_d">Сними чехол и избегай активного использования во время зарядки</string>
+    <string name="rec_dead_t">Батарея неисправна</string>
+    <string name="rec_dead_d">Замени батарею как можно скорее</string>
+    <string name="rec_overheat_t">Обнаружен перегрев</string>
+    <string name="rec_overheat_d">Дай устройству остыть перед использованием</string>
+    <string name="rec_full_t">Батарея заряжена</string>
+    <string name="rec_full_d">Отключи зарядку — это сохранит ресурс батареи</string>
+    <string name="rec_opt80_t">Оптимальная зарядка</string>
+    <string name="rec_opt80_d">80% достаточно для повседневного использования — отключи чтобы продлить срок службы</string>
+    <string name="rec_critical_t">Критический уровень</string>
+    <string name="rec_critical_d">Немедленно подключи зарядку</string>
+    <string name="rec_low_t">Батарея разряжена</string>
+    <string name="rec_low_d">Скоро потребуется зарядка</string>
+    <string name="rec_drain_t">Быстрый разряд</string>
+    <string name="rec_drain_d">Проверь фоновые приложения или плохой сигнал сети</string>
+    <string name="rec_cycles_t">Много циклов</string>
+    <string name="rec_cycles_d">Более 800 циклов — естественная потеря ёмкости</string>
 </resources>
