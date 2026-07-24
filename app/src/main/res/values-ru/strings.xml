@@ -95,6 +95,7 @@
     <string name="update_available">Доступно обновление: v%s</string>
     <string name="download_update">Скачать</string>
     <string name="update_error">Не удалось проверить обновления</string>
+    <string name="downloading">Скачивание…</string>
 
     <!-- BatteryService -->
     <string name="battery_high_title">Батарея заряжена</string>

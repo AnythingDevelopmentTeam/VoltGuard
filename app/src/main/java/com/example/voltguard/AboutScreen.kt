@@ -214,9 +214,11 @@ fun AboutScreen(modifier: Modifier = Modifier) {
                 text = { Text(stringResource(R.string.update_available, state.info.latestVersion)) },
                 confirmButton = {
                     TextButton(onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(state.info.downloadUrl))
-                        context.startActivity(intent)
-                        updateDialog = null
+                        scope.launch {
+                            updateDialog = UpdateDialogState.Downloading
+                            val ok = ApkDownloader.downloadAndInstall(context, state.info.apkUrl)
+                            if (!ok) updateDialog = null
+                        }
                     }) {
                         Text(stringResource(R.string.download_update))
                     }
@@ -228,6 +230,20 @@ fun AboutScreen(modifier: Modifier = Modifier) {
                 }
             )
         }
+        is UpdateDialogState.Downloading -> {
+            AlertDialog(
+                onDismissRequest = { updateDialog = null },
+                title = { Text(stringResource(R.string.check_updates)) },
+                text = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(stringResource(R.string.downloading))
+                    }
+                },
+                confirmButton = {}
+            )
+        }
         null -> {}
     }
 }
@@ -235,6 +251,7 @@ fun AboutScreen(modifier: Modifier = Modifier) {
 private sealed class UpdateDialogState {
     data object Checking : UpdateDialogState()
     data object UpToDate : UpdateDialogState()
+    data object Downloading : UpdateDialogState()
     data class Available(val info: UpdateInfo) : UpdateDialogState()
 }
 

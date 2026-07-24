@@ -95,6 +95,7 @@
     <string name="update_available">Update available: v%s</string>
     <string name="download_update">Download</string>
     <string name="update_error">Could not check for updates</string>
+    <string name="downloading">Downloading…</string>
 
     <!-- BatteryService -->
     <string name="battery_high_title">Battery High</string>

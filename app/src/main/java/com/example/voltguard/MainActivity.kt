@@ -4,8 +4,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,10 +18,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -47,6 +48,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -287,7 +289,9 @@ private fun BottomBarScreen() {
 @Composable
 private fun AutoUpdateDialog() {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var updateInfo by remember { mutableStateOf<UpdateInfo?>(null) }
+    var downloading by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         val prefs = context.getSharedPreferences("voltguard_prefs", Context.MODE_PRIVATE)
@@ -297,6 +301,21 @@ private fun AutoUpdateDialog() {
         val current = context.getString(R.string.version)
         val result = UpdateChecker.check(current)
         if (result.isNewer) updateInfo = result
+    }
+
+    if (downloading) {
+        AlertDialog(
+            onDismissRequest = {},
+            title = { Text(stringResource(R.string.check_updates)) },
+            text = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(stringResource(R.string.downloading))
+                }
+            },
+            confirmButton = {}
+        )
     }
 
     updateInfo?.let { info ->
@@ -311,9 +330,12 @@ private fun AutoUpdateDialog() {
             },
             confirmButton = {
                 TextButton(onClick = {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(info.downloadUrl))
-                    context.startActivity(intent)
-                    updateInfo = null
+                    scope.launch {
+                        downloading = true
+                        val ok = ApkDownloader.downloadAndInstall(context, info.apkUrl)
+                        if (ok) updateInfo = null
+                        downloading = false
+                    }
                 }) {
                     Text(stringResource(R.string.download_update))
                 }

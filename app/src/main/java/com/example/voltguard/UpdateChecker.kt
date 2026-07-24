@@ -8,14 +8,13 @@ import java.net.URL
 
 data class UpdateInfo(
     val latestVersion: String,
-    val downloadUrl: String,
+    val apkUrl: String,
     val isNewer: Boolean
 )
 
 object UpdateChecker {
 
     private const val GITHUB_API = "https://api.github.com/repos/AnythingDevelopmentTeam/VoltGuard/releases/latest"
-    private const val GITHUB_RELEASES = "https://github.com/AnythingDevelopmentTeam/VoltGuard/releases/tag/"
 
     suspend fun check(currentVersion: String): UpdateInfo = withContext(Dispatchers.IO) {
         val connection = URL(GITHUB_API).openConnection() as HttpURLConnection
@@ -28,11 +27,21 @@ object UpdateChecker {
             val response = connection.inputStream.bufferedReader().readText()
             val json = JSONObject(response)
             val tagName = json.getString("tag_name").removePrefix("v")
-            val downloadUrl = GITHUB_RELEASES + json.getString("tag_name")
+
+            val assets = json.getJSONArray("assets")
+            var apkUrl = ""
+            for (i in 0 until assets.length()) {
+                val asset = assets.getJSONObject(i)
+                val name = asset.getString("name")
+                if (name.endsWith(".apk")) {
+                    apkUrl = asset.getString("browser_download_url")
+                    break
+                }
+            }
 
             UpdateInfo(
                 latestVersion = tagName,
-                downloadUrl = downloadUrl,
+                apkUrl = apkUrl,
                 isNewer = compareVersions(tagName, currentVersion) > 0
             )
         } catch (_: Exception) {
