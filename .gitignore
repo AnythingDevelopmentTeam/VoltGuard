@@ -8,4 +8,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+AGENTS.md
 app/keystore.jks
