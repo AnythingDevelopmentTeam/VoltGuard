@@ -230,7 +230,7 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
         SettingsCard(title = stringResource(R.string.about_app)) {
             SettingsRow(label = stringResource(R.string.ver)) {
                 Text(
-                    text = stringResource(R.string.version),
+                    text = BuildConfig.VERSION_NAME,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
