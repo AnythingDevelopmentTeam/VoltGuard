@@ -29,6 +29,12 @@ class SettingsManager(context: Context) {
     private val _firstLaunchDone = MutableStateFlow(prefs.getBoolean(KEY_FIRST_LAUNCH, false))
     val firstLaunchDone: StateFlow<Boolean> = _firstLaunchDone.asStateFlow()
 
+    private val _recommendationsEnabled = MutableStateFlow(prefs.getBoolean(KEY_RECOMMENDATIONS, true))
+    val recommendationsEnabled: StateFlow<Boolean> = _recommendationsEnabled.asStateFlow()
+
+    private val _fullChargeReminder = MutableStateFlow(prefs.getBoolean(KEY_FULL_CHARGE, false))
+    val fullChargeReminder: StateFlow<Boolean> = _fullChargeReminder.asStateFlow()
+
     fun setLowThreshold(value: Int) {
         prefs.edit().putInt(KEY_LOW, value).apply()
         _lowThreshold.value = value
@@ -59,6 +65,16 @@ class SettingsManager(context: Context) {
         _firstLaunchDone.value = true
     }
 
+    fun setRecommendationsEnabled(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_RECOMMENDATIONS, enabled).apply()
+        _recommendationsEnabled.value = enabled
+    }
+
+    fun setFullChargeReminder(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_FULL_CHARGE, enabled).apply()
+        _fullChargeReminder.value = enabled
+    }
+
     companion object {
         private const val KEY_LOW = "low_threshold"
         private const val KEY_HIGH = "high_threshold"
@@ -66,6 +82,8 @@ class SettingsManager(context: Context) {
         private const val KEY_NAV_STYLE = "navigation_style"
         private const val KEY_FIRST_LAUNCH = "first_launch_done"
         private const val KEY_LANG = "app_language"
+        private const val KEY_RECOMMENDATIONS = "recommendations_enabled"
+        private const val KEY_FULL_CHARGE = "full_charge_reminder"
 
         @Volatile
         private var instance: SettingsManager? = null

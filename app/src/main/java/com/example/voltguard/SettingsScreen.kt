@@ -21,6 +21,7 @@ import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -46,6 +47,8 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
     val alertsEnabled by settings.alertsEnabled.collectAsState()
     val navigationStyle by settings.navigationStyle.collectAsState()
     val language by settings.language.collectAsState()
+    val recommendationsEnabled by settings.recommendationsEnabled.collectAsState()
+    val fullChargeReminder by settings.fullChargeReminder.collectAsState()
 
     Column(
         modifier = modifier
@@ -229,6 +232,28 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha),
                 lineHeight = 18.sp
             )
+
+            Spacer(modifier = Modifier.height(12.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(12.dp))
+
+            SettingsRow(label = stringResource(R.string.recommendations)) {
+                Switch(
+                    checked = recommendationsEnabled,
+                    onCheckedChange = { settings.setRecommendationsEnabled(it) },
+                    enabled = serviceRunning
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            SettingsRow(label = stringResource(R.string.full_charge_reminder)) {
+                Switch(
+                    checked = fullChargeReminder,
+                    onCheckedChange = { settings.setFullChargeReminder(it) },
+                    enabled = serviceRunning
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(12.dp))

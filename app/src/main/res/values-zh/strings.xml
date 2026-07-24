@@ -51,6 +51,9 @@
     <string name="percent_charged">已充电 %s%%</string>
     <string name="used_charged_format">已用：%s%% | 已充：%s%%</string>
     <string name="screen_on">屏幕开启</string>
+    <string name="export_csv">导出 CSV</string>
+    <string name="export_csv_success">会话已导出</string>
+    <string name="chart_24h">24小时电池电量</string>
     <string name="settings_title">设置</string>
     <string name="language">语言</string>
     <string name="service_title">服务</string>
@@ -66,6 +69,9 @@
     <string name="min_sdk">最低 SDK</string>
     <string name="min_sdk_val">24（安卓 7.0）</string>
     <string name="target_sdk">目标 SDK</string>
+    <string name="full_charge_reminder">充满电提醒</string>
+    <string name="full_charge_reminder_title">拔掉充电器</string>
+    <string name="full_charge_reminder_body">电池已长时间处于 100%% 状态——拔掉充电器以保护电池健康</string>
     <string name="about_title">关于</string>
     <string name="about_description" formatted="false">VoltGuard 实时监控您的电池：电量、温度、电压、健康状态和循环次数。后台服务在电量达到 20% 或 80% 时发送警报。</string>
     <string name="features">功能特性</string>
@@ -90,6 +96,8 @@
     <string name="channel_status_desc">持续电池状态通知</string>
     <string name="channel_alerts_name">电池警报</string>
     <string name="channel_alerts_desc">电池阈值警报通知</string>
+    <string name="channel_reminder_name">充满电提醒</string>
+    <string name="channel_reminder_desc">充满电时提醒拔掉充电器</string>
     <string name="service_notif_title">VoltGuard</string>
     <string name="service_notif_body">电池：%d%%</string>
     <string name="unit_celsius">°C</string>

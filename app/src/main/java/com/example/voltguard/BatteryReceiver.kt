@@ -15,6 +15,7 @@ class BatteryReceiver(
         val info = parseBatteryIntent(intent)
         onBatteryChanged(info)
         BatteryWidgetProvider.updateWidget(context, info)
+        BatteryWidgetProviderSmall.updateWidget(context, info)
     }
 
     companion object {

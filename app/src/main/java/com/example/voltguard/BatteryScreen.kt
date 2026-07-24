@@ -54,6 +54,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -65,6 +66,9 @@ fun BatteryScreen(
     modifier: Modifier = Modifier
 ) {
     val batteryInfo by viewModel.batteryInfo.collectAsState()
+    val context = LocalContext.current
+    val settings = SettingsManager.getInstance(context)
+    val recommendationsEnabled by settings.recommendationsEnabled.collectAsState()
 
     val isCharging = batteryInfo.status == "Charging"
     val bgColor = when {
@@ -232,22 +236,24 @@ fun BatteryScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        if (recommendationsEnabled) {
+            Spacer(modifier = Modifier.height(12.dp))
 
-        AnimatedCard(visible = visible, index = 7) {
-            val recommendations = BatteryAnalyzer.analyze(batteryInfo)
-            if (recommendations.isNotEmpty()) {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = stringResource(R.string.recommendations),
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    recommendations.forEach { rec ->
-                        RecommendationRow(rec = rec)
-                        if (rec != recommendations.last()) {
-                            Spacer(modifier = Modifier.height(6.dp))
+            AnimatedCard(visible = visible, index = 7) {
+                val recommendations = BatteryAnalyzer.analyze(batteryInfo)
+                if (recommendations.isNotEmpty()) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = stringResource(R.string.recommendations),
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        recommendations.forEach { rec ->
+                            RecommendationRow(rec = rec)
+                            if (rec != recommendations.last()) {
+                                Spacer(modifier = Modifier.height(6.dp))
+                            }
                         }
                     }
                 }

@@ -56,6 +56,9 @@
     <string name="percent_charged">%s%% geladen</string>
     <string name="used_charged_format">Genutzt: %s%% | Geladen: %s%%</string>
     <string name="screen_on">Bildschirm an</string>
+    <string name="export_csv">CSV exportieren</string>
+    <string name="export_csv_success">Sitzungen exportiert</string>
+    <string name="chart_24h">24h Akku-Ladestand</string>
 
     <string name="settings_title">Einstellungen</string>
     <string name="language">Sprache</string>
@@ -72,6 +75,9 @@
     <string name="min_sdk">Min SDK</string>
     <string name="min_sdk_val">24 (Android 7.0)</string>
     <string name="target_sdk">Target SDK</string>
+    <string name="full_charge_reminder">Erinnerung: Akku voll</string>
+    <string name="full_charge_reminder_title">Ladegerät abziehen</string>
+    <string name="full_charge_reminder_body">Akku ist seit einiger Zeit bei 100%% — abziehen, um die Lebensdauer zu schonen</string>
 
     <string name="about_title">Über</string>
     <string name="about_description" formatted="false">VoltGuard überwacht Ihren Akku in Echtzeit: Ladestand, Temperatur, Spannung, Zustand und Zyklenzahl. Der Hintergrunddienst sendet Benachrichtigungen bei 20% oder 80%.</string>
@@ -98,6 +104,8 @@
     <string name="channel_status_desc">Dauerhafte Akku-Statusbenachrichtigung</string>
     <string name="channel_alerts_name">Akku-Alarme</string>
     <string name="channel_alerts_desc">Benachrichtigungen für Akku-Grenzwerte</string>
+    <string name="channel_reminder_name">Erinnerung bei vollem Akku</string>
+    <string name="channel_reminder_desc">Erinnerung, das Ladegerät abzuziehen, wenn der Akku voll ist</string>
     <string name="service_notif_title">VoltGuard</string>
     <string name="service_notif_body">Akku: %d%%</string>
 

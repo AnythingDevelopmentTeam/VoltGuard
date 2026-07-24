@@ -61,6 +61,9 @@
     <string name="percent_charged">%s%% charged</string>
     <string name="used_charged_format">Used: %s%% | Charged: %s%%</string>
     <string name="screen_on">screen on</string>
+    <string name="export_csv">Export CSV</string>
+    <string name="export_csv_success">Sessions exported</string>
+    <string name="chart_24h">24h Battery Level</string>
 
     <!-- SettingsScreen -->
     <string name="settings_title">Settings</string>
@@ -73,6 +76,10 @@
     <string name="low_alert_setting">Low alert</string>
     <string name="high_alert_setting">High alert</string>
     <string name="notification_summary">Battery %d%%: push notification&#10;Battery %d%%: push notification</string>
+    <string name="recommendations">Recommendations</string>
+    <string name="full_charge_reminder">Full charge reminder</string>
+    <string name="full_charge_reminder_title">Unplug your charger</string>
+    <string name="full_charge_reminder_body">Battery has been at 100%% for a while — unplug to preserve health</string>
     <string name="about_app">About this app</string>
     <string name="ver">Version</string>
     <string name="min_sdk">Min SDK</string>
@@ -106,6 +113,8 @@
     <string name="channel_status_desc">Persistent battery status notification</string>
     <string name="channel_alerts_name">Battery Alerts</string>
     <string name="channel_alerts_desc">Notifications for battery threshold alerts</string>
+    <string name="channel_reminder_name">Full Charge Reminder</string>
+    <string name="channel_reminder_desc">Reminder to unplug when fully charged</string>
     <string name="service_notif_title">VoltGuard</string>
     <string name="service_notif_body">Battery: %d%%</string>
 
@@ -120,7 +129,6 @@
     <string name="widget_percent">%</string>
 
     <!-- Recommendations -->
-    <string name="recommendations">Recommendations</string>
     <string name="rec_scorch_t">Extreme temperature</string>
     <string name="rec_scorch_d">Unplug immediately and let the battery cool down</string>
     <string name="rec_hot_t">Battery is hot</string>

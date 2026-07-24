@@ -179,6 +179,22 @@ class SessionTracker(context: Context) {
         }.sortedByDescending { it.date }
     }
 
+    fun generateCsv(): String {
+        val sessions = loadSessions()
+        val sb = StringBuilder()
+        sb.appendLine("ID,Type,StartLevel,EndLevel,StartTime,EndTime,StartVoltage,EndVoltage,AvgCurrent(mA),AvgTemperature(°C),ChargeAdded(%),Duration(ms)")
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        for (s in sessions) {
+            sb.appendLine(
+                "${s.id},${s.type.name},${s.startLevel},${s.endLevel}," +
+                "${dateFormat.format(Date(s.startTime))},${dateFormat.format(Date(s.endTime))}," +
+                "${s.startVoltage},${s.endVoltage},${s.avgCurrent},${s.avgTemperature}," +
+                "${s.chargeAdded},${s.duration}"
+            )
+        }
+        return sb.toString()
+    }
+
     private fun saveSession(session: BatterySession) {
         val json = sessionToJson(session)
         val array = loadSessionArray()

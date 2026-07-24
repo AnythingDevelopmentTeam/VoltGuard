@@ -51,6 +51,9 @@
     <string name="percent_charged">%s%% naładowana</string>
     <string name="used_charged_format">Użyto: %s%% | Naładowano: %s%%</string>
     <string name="screen_on">ekran włączony</string>
+    <string name="export_csv">Eksportuj CSV</string>
+    <string name="export_csv_success">Sesje wyeksportowane</string>
+    <string name="chart_24h">Poziom baterii 24h</string>
     <string name="settings_title">Ustawienia</string>
     <string name="language">Język</string>
     <string name="service_title">Usługa</string>
@@ -66,6 +69,9 @@
     <string name="min_sdk">Min. SDK</string>
     <string name="min_sdk_val">24 (Android 7.0)</string>
     <string name="target_sdk">Docelowe SDK</string>
+    <string name="full_charge_reminder">Przypomnienie o pełnym naładowaniu</string>
+    <string name="full_charge_reminder_title">Odłącz ładowarkę</string>
+    <string name="full_charge_reminder_body">Bateria jest od jakiegoś czasu na 100%% — odłącz, aby zachować jej żywotność</string>
     <string name="about_title">O aplikacji</string>
     <string name="about_description" formatted="false">VoltGuard monitoruje baterię w czasie rzeczywistym: poziom naładowania, temperaturę, napięcie, stan i liczbę cykli. Usługa w tle wysyła alerty, gdy ładunek przekroczy 20% lub 80%.</string>
     <string name="features">Funkcje</string>
@@ -90,6 +96,8 @@
     <string name="channel_status_desc">Stałe powiadomienie o stanie baterii</string>
     <string name="channel_alerts_name">Alerty baterii</string>
     <string name="channel_alerts_desc">Powiadomienia o alertach progowych baterii</string>
+    <string name="channel_reminder_name">Przypomnienie o pełnym naładowaniu</string>
+    <string name="channel_reminder_desc">Przypomnienie o odłączeniu ładowarki po pełnym naładowaniu</string>
     <string name="service_notif_title">VoltGuard</string>
     <string name="service_notif_body">Bateria: %d%%</string>
     <string name="unit_celsius">°C</string>

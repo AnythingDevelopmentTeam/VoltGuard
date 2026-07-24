@@ -1,5 +1,7 @@
 package com.example.voltguard
 
+import android.content.Intent
+
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -26,6 +28,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -58,6 +62,7 @@ fun AccuScreen(
     val timeToEmpty by accuViewModel.timeToEmpty.collectAsState()
     val history by accuViewModel.history.collectAsState()
     val dailyUsage by accuViewModel.dailyUsage.collectAsState()
+    val chartPoints by accuViewModel.chartPoints.collectAsState()
 
     LaunchedEffect(batteryInfo) {
         accuViewModel.onBatteryChanged(batteryInfo)
@@ -232,6 +237,33 @@ fun AccuScreen(
             }
         }
 
+        if (chartPoints.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                text = stringResource(R.string.chart_24h),
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 4.dp)
+            )
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+            ) {
+                BatteryChart(
+                    points = chartPoints,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
+        }
+
         if (dailyUsage.isNotEmpty()) {
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -248,6 +280,20 @@ fun AccuScreen(
                 DailyUsageCard(usage)
                 Spacer(modifier = Modifier.height(8.dp))
             }
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        val context = LocalContext.current
+        OutlinedButton(
+            onClick = {
+                val intent = accuViewModel.exportCsv()
+                context.startActivity(Intent.createChooser(intent, null))
+            },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text(stringResource(R.string.export_csv))
         }
 
         Spacer(modifier = Modifier.height(48.dp))

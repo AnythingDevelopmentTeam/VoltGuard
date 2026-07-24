@@ -56,6 +56,9 @@
     <string name="percent_charged">%s%% chargée</string>
     <string name="used_charged_format">Utilisé : %s%% | Chargé : %s%%</string>
     <string name="screen_on">écran allumé</string>
+    <string name="export_csv">Exporter CSV</string>
+    <string name="export_csv_success">Sessions exportées</string>
+    <string name="chart_24h">Niveau de batterie 24h</string>
 
     <string name="settings_title">Paramètres</string>
     <string name="language">Langue</string>
@@ -72,6 +75,9 @@
     <string name="min_sdk">SDK min</string>
     <string name="min_sdk_val">24 (Android 7.0)</string>
     <string name="target_sdk">SDK cible</string>
+    <string name="full_charge_reminder">Rappel de charge complète</string>
+    <string name="full_charge_reminder_title">Débranchez votre chargeur</string>
+    <string name="full_charge_reminder_body">La batterie est à 100%% depuis un moment — débranchez pour préserver sa santé</string>
 
     <string name="about_title">À propos</string>
     <string name="about_description" formatted="false">VoltGuard surveille votre batterie en temps réel : niveau de charge, température, tension, santé et nombre de cycles. Le service en arrière-plan envoie des alertes lorsque la charge atteint 20 % ou 80 %.</string>
@@ -98,6 +104,8 @@
     <string name="channel_status_desc">Notification persistante de l\'état de la batterie</string>
     <string name="channel_alerts_name">Alertes batterie</string>
     <string name="channel_alerts_desc">Notifications pour les seuils d\'alerte de la batterie</string>
+    <string name="channel_reminder_name">Rappel de charge complète</string>
+    <string name="channel_reminder_desc">Rappel pour débrancher lorsque la batterie est pleine</string>
     <string name="service_notif_title">VoltGuard</string>
     <string name="service_notif_body">Batterie : %d%%</string>
 

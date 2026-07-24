@@ -16,6 +16,7 @@ class BatteryService : Service() {
     private var batteryReceiver: BatteryReceiver? = null
     private var notifiedHigh = false
     private var notifiedLow = false
+    private var lastFullReminderTime = 0L
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -39,10 +40,12 @@ class BatteryService : Service() {
 
     private fun registerBatteryReceiver() {
         val tracker = SessionTracker.getInstance(this)
+        val history = BatteryHistoryManager.getInstance(this)
         batteryReceiver = BatteryReceiver { info ->
             updateStickyNotification(info.level)
             checkThresholdAndNotify(info)
             tracker.onBatteryChanged(info)
+            history.addPoint(info.level)
         }
         val intentFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
         registerReceiver(batteryReceiver, intentFilter)
@@ -89,6 +92,29 @@ class BatteryService : Service() {
             notifiedHigh = false
             notifiedLow = false
         }
+
+        checkFullChargeReminder(info, isCharging)
+    }
+
+    private fun checkFullChargeReminder(info: BatteryInfo, isCharging: Boolean) {
+        val settings = SettingsManager.getInstance(this)
+        if (!settings.fullChargeReminder.value) return
+
+        val now = System.currentTimeMillis()
+        if (info.level >= 100 && isCharging) {
+            if (lastFullReminderTime == 0L) {
+                lastFullReminderTime = now
+            } else if (now - lastFullReminderTime > FULL_REMINDER_INTERVAL) {
+                sendThresholdNotification(
+                    title = getString(R.string.full_charge_reminder_title),
+                    message = getString(R.string.full_charge_reminder_body),
+                    channelId = CHANNEL_REMINDER
+                )
+                lastFullReminderTime = now
+            }
+        } else {
+            lastFullReminderTime = 0L
+        }
     }
 
     private fun createNotificationChannels() {
@@ -112,6 +138,15 @@ class BatteryService : Service() {
 
         manager.createNotificationChannel(stickyChannel)
         manager.createNotificationChannel(alertChannel)
+
+        val reminderChannel = NotificationChannel(
+            CHANNEL_REMINDER,
+            getString(R.string.channel_reminder_name),
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = getString(R.string.channel_reminder_desc)
+        }
+        manager.createNotificationChannel(reminderChannel)
     }
 
     private fun buildStickyNotification(level: Int) =
@@ -129,8 +164,8 @@ class BatteryService : Service() {
         manager.notify(NOTIFICATION_ID_STICKY, buildStickyNotification(level))
     }
 
-    private fun sendThresholdNotification(title: String, message: String) {
-        val notification = NotificationCompat.Builder(this, CHANNEL_ALERT)
+    private fun sendThresholdNotification(title: String, message: String, channelId: String = CHANNEL_ALERT) {
+        val notification = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_notification_battery)
             .setContentTitle(title)
             .setContentText(message)
@@ -156,7 +191,9 @@ class BatteryService : Service() {
     companion object {
         private const val CHANNEL_STICKY = "battery_sticky"
         private const val CHANNEL_ALERT = "battery_alert"
+        private const val CHANNEL_REMINDER = "battery_reminder"
         private const val NOTIFICATION_ID_STICKY = 1001
+        private const val FULL_REMINDER_INTERVAL = 15 * 60 * 1000L
 
         fun start(context: Context) {
             val intent = Intent(context, BatteryService::class.java)
