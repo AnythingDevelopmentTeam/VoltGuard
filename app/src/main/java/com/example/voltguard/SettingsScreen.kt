@@ -57,6 +57,10 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
     val quietHoursEnd by settings.quietHoursEnd.collectAsState()
     val alertSound by settings.alertSound.collectAsState()
     val alertVibrate by settings.alertVibrate.collectAsState()
+    val chargeSpeedAlert by settings.chargeSpeedAlert.collectAsState()
+    val widgetColor by settings.widgetColor.collectAsState()
+    val batterySaverThreshold by settings.batterySaverThreshold.collectAsState()
+    val dndQuietHours by settings.dndQuietHours.collectAsState()
 
     Column(
         modifier = modifier
@@ -161,6 +165,40 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
                     checked = darkTheme,
                     onCheckedChange = { settings.setDarkTheme(it) }
                 )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        SettingsCard(title = stringResource(R.string.widget_settings)) {
+            val colors = listOf(
+                stringResource(R.string.widget_auto) to "auto",
+                stringResource(R.string.widget_green) to "green",
+                stringResource(R.string.widget_blue) to "blue",
+                stringResource(R.string.widget_dark) to "dark"
+            )
+            colors.forEach { (label, value) ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .selectable(
+                            selected = widgetColor == value,
+                            onClick = { settings.setWidgetColor(value) },
+                            role = Role.RadioButton
+                        )
+                        .padding(vertical = 2.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = widgetColor == value,
+                        onClick = null,
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = MaterialTheme.colorScheme.primary
+                        )
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = label, style = MaterialTheme.typography.bodyMedium)
+                }
             }
         }
 
@@ -340,7 +378,46 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
                         )
                     }
                 }
+                Spacer(modifier = Modifier.height(12.dp))
+                HorizontalDivider()
+                Spacer(modifier = Modifier.height(12.dp))
+                SettingsRow(label = stringResource(R.string.dnd_quiet_hours)) {
+                    Switch(
+                        checked = dndQuietHours,
+                        onCheckedChange = { settings.setDndQuietHours(it) }
+                    )
+                }
             }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        SettingsCard(title = stringResource(R.string.charge_speed_alert)) {
+            SettingsRow(label = stringResource(R.string.charge_speed_alert)) {
+                Switch(
+                    checked = chargeSpeedAlert,
+                    onCheckedChange = { settings.setChargeSpeedAlert(it) }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        SettingsCard(title = stringResource(R.string.battery_saver)) {
+            SettingsRow(label = stringResource(R.string.battery_saver)) {
+                Text(
+                    text = "$batterySaverThreshold%",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            Slider(
+                value = batterySaverThreshold.toFloat(),
+                onValueChange = { settings.setBatterySaverThreshold(it.toInt()) },
+                valueRange = 5f..30f,
+                steps = 24
+            )
         }
 
         Spacer(modifier = Modifier.height(12.dp))

@@ -17,6 +17,8 @@ class BatteryService : Service() {
     private var notifiedHigh = false
     private var notifiedLow = false
     private var lastFullReminderTime = 0L
+    private var lastSpeedNotified: String? = null
+    private var lastSaverNotified = false
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -46,6 +48,8 @@ class BatteryService : Service() {
             checkThresholdAndNotify(info)
             tracker.onBatteryChanged(info)
             history.addPoint(info.level)
+            history.addTempPoint(info.temperature)
+            applyDnd(this)
         }
         val intentFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
         registerReceiver(batteryReceiver, intentFilter)
@@ -61,7 +65,7 @@ class BatteryService : Service() {
     private fun checkThresholdAndNotify(info: BatteryInfo) {
         val settings = SettingsManager.getInstance(this)
         if (!settings.alertsEnabled.value) return
-        if (settings.isInQuietHours()) return
+        if (settings.isInQuietHours() && !settings.dndQuietHours.value) return
 
         val lowThreshold = settings.lowThreshold.value
         val highThreshold = settings.highThreshold.value
@@ -95,6 +99,56 @@ class BatteryService : Service() {
         }
 
         checkFullChargeReminder(info, isCharging)
+        checkChargeSpeed(info, isCharging, settings)
+        checkBatterySaver(info, isCharging, settings)
+    }
+
+    private fun checkChargeSpeed(info: BatteryInfo, isCharging: Boolean, settings: SettingsManager) {
+        if (!settings.chargeSpeedAlert.value || !isCharging) {
+            lastSpeedNotified = null
+            return
+        }
+        val currentMa = info.currentNow / 1000
+        val speed = when {
+            currentMa < 0 -> null
+            currentMa < 500 -> "slow"
+            currentMa > 2000 -> "fast"
+            else -> null
+        }
+        if (speed != null && speed != lastSpeedNotified) {
+            lastSpeedNotified = speed
+            val title = if (speed == "slow") "Slow charging" else "Fast charging"
+            val body = if (speed == "slow") "Charging at ${currentMa}mA — consider using a different charger"
+                       else "Charging at ${currentMa}mA"
+            sendThresholdNotification(
+                title = title,
+                message = body,
+                channelId = CHANNEL_REMINDER
+            )
+        }
+    }
+
+    private fun checkBatterySaver(info: BatteryInfo, isCharging: Boolean, settings: SettingsManager) {
+        val threshold = settings.batterySaverThreshold.value
+        if (!isCharging && info.level <= threshold && !lastSaverNotified) {
+            lastSaverNotified = true
+            val intent = Intent(android.provider.Settings.ACTION_BATTERY_SAVER_SETTINGS).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            val pending = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+            val notification = NotificationCompat.Builder(this, CHANNEL_ALERT)
+                .setSmallIcon(R.drawable.ic_notification_battery)
+                .setContentTitle("Battery saver")
+                .setContentText("Battery is at ${info.level}% — consider enabling battery saver")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .setContentIntent(pending)
+                .build()
+            val manager = getSystemService(NotificationManager::class.java)
+            manager.notify(NOTIFICATION_BATTERY_SAVER, notification)
+        } else if (isCharging || info.level > threshold + 5) {
+            lastSaverNotified = false
+        }
     }
 
     private fun checkFullChargeReminder(info: BatteryInfo, isCharging: Boolean) {
@@ -198,6 +252,7 @@ class BatteryService : Service() {
         private const val CHANNEL_ALERT = "battery_alert"
         private const val CHANNEL_REMINDER = "battery_reminder"
         private const val NOTIFICATION_ID_STICKY = 1001
+        private const val NOTIFICATION_BATTERY_SAVER = 1003
         private const val FULL_REMINDER_INTERVAL = 15 * 60 * 1000L
 
         fun start(context: Context) {
@@ -207,6 +262,17 @@ class BatteryService : Service() {
 
         fun stop(context: Context) {
             context.stopService(Intent(context, BatteryService::class.java))
+        }
+
+        fun applyDnd(context: Context) {
+            val settings = SettingsManager.getInstance(context)
+            val manager = context.getSystemService(NotificationManager::class.java)
+            if (!manager.isNotificationPolicyAccessGranted) return
+            if (settings.dndQuietHours.value && settings.quietHoursEnabled.value && settings.isInQuietHours()) {
+                manager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALARMS)
+            } else {
+                manager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
+            }
         }
     }
 }

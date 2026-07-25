@@ -68,6 +68,7 @@
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
     <string name="chart_24h">24h Battery Level</string>
+    <string name="chart_temp">Temperature 24h</string>
 
     <!-- SettingsScreen -->
     <string name="settings_title">Settings</string>
@@ -170,4 +171,24 @@
     <string name="restore_settings">Restore settings</string>
     <string name="backup_success">Settings backed up</string>
     <string name="restore_success">Settings restored</string>
+
+    <!-- Charge speed -->
+    <string name="charge_speed_alert">Charge speed alert</string>
+    <string name="slow_charging">Slow charging</string>
+    <string name="fast_charging">Fast charging</string>
+
+    <!-- Widget -->
+    <string name="widget_settings">Widget</string>
+    <string name="widget_color">Widget color</string>
+    <string name="widget_auto">Auto</string>
+    <string name="widget_green">Green</string>
+    <string name="widget_blue">Blue</string>
+    <string name="widget_dark">Dark</string>
+
+    <!-- Battery saver -->
+    <string name="battery_saver">Battery saver alert</string>
+    <string name="battery_saver_threshold">Threshold</string>
+
+    <!-- DnD -->
+    <string name="dnd_quiet_hours">DnD during quiet hours</string>
 </resources>

@@ -53,6 +53,18 @@ class SettingsManager(context: Context) {
     private val _alertVibrate = MutableStateFlow(prefs.getBoolean(KEY_ALERT_VIBRATE, true))
     val alertVibrate: StateFlow<Boolean> = _alertVibrate.asStateFlow()
 
+    private val _chargeSpeedAlert = MutableStateFlow(prefs.getBoolean(KEY_CHARGE_SPEED, false))
+    val chargeSpeedAlert: StateFlow<Boolean> = _chargeSpeedAlert.asStateFlow()
+
+    private val _widgetColor = MutableStateFlow(prefs.getString(KEY_WIDGET_COLOR, "auto") ?: "auto")
+    val widgetColor: StateFlow<String> = _widgetColor.asStateFlow()
+
+    private val _batterySaverThreshold = MutableStateFlow(prefs.getInt(KEY_BATTERY_SAVER, 15))
+    val batterySaverThreshold: StateFlow<Int> = _batterySaverThreshold.asStateFlow()
+
+    private val _dndQuietHours = MutableStateFlow(prefs.getBoolean(KEY_DND_QUIET, false))
+    val dndQuietHours: StateFlow<Boolean> = _dndQuietHours.asStateFlow()
+
     fun setLowThreshold(value: Int) {
         prefs.edit().putInt(KEY_LOW, value).apply()
         _lowThreshold.value = value
@@ -167,6 +179,26 @@ class SettingsManager(context: Context) {
         _alertVibrate.value = enabled
     }
 
+    fun setChargeSpeedAlert(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_CHARGE_SPEED, enabled).apply()
+        _chargeSpeedAlert.value = enabled
+    }
+
+    fun setWidgetColor(color: String) {
+        prefs.edit().putString(KEY_WIDGET_COLOR, color).apply()
+        _widgetColor.value = color
+    }
+
+    fun setBatterySaverThreshold(value: Int) {
+        prefs.edit().putInt(KEY_BATTERY_SAVER, value).apply()
+        _batterySaverThreshold.value = value
+    }
+
+    fun setDndQuietHours(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_DND_QUIET, enabled).apply()
+        _dndQuietHours.value = enabled
+    }
+
     companion object {
         private const val KEY_LOW = "low_threshold"
         private const val KEY_HIGH = "high_threshold"
@@ -182,6 +214,10 @@ class SettingsManager(context: Context) {
         private const val KEY_QUIET_HOURS_END = "quiet_hours_end"
         private const val KEY_ALERT_SOUND = "alert_sound"
         private const val KEY_ALERT_VIBRATE = "alert_vibrate"
+        private const val KEY_CHARGE_SPEED = "charge_speed_alert"
+        private const val KEY_WIDGET_COLOR = "widget_color"
+        private const val KEY_BATTERY_SAVER = "battery_saver_threshold"
+        private const val KEY_DND_QUIET = "dnd_quiet_hours"
 
         @Volatile
         private var instance: SettingsManager? = null

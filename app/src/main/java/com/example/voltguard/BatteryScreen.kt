@@ -69,6 +69,8 @@ fun BatteryScreen(
     val context = LocalContext.current
     val settings = SettingsManager.getInstance(context)
     val recommendationsEnabled by settings.recommendationsEnabled.collectAsState()
+    val timeToFull by viewModel.timeToFull.collectAsState()
+    val timeToEmpty by viewModel.timeToEmpty.collectAsState()
 
     val isCharging = batteryInfo.status == "Charging"
     val bgColor = when {
@@ -163,9 +165,30 @@ fun BatteryScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         AnimatedCard(visible = visible, index = 3) {
+            val timeText = if (isCharging && timeToFull > 0) {
+                "→ full: ${formatDuration(timeToFull)}"
+            } else if (!isCharging && timeToEmpty > 0) {
+                "→ empty: ${formatDuration(timeToEmpty)}"
+            } else ""
+            if (timeText.isNotEmpty()) {
+                Text(
+                    text = timeText,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = if (isCharging) Color(0xFF4CAF50) else Color(0xFFF44336),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        AnimatedCard(visible = visible, index = 4) {
             Text(
                 text = stringResource(R.string.battery_health),
                 style = MaterialTheme.typography.titleSmall,
@@ -263,6 +286,13 @@ fun BatteryScreen(
         Spacer(modifier = Modifier.height(24.dp))
         Spacer(modifier = Modifier.height(48.dp))
     }
+}
+
+private fun formatDuration(millis: Long): String {
+    if (millis <= 0) return "--:--"
+    val hours = millis / 3600000
+    val minutes = (millis % 3600000) / 60000
+    return if (hours > 0) "${hours}h ${minutes}m" else "${minutes}m"
 }
 
 private fun getStatusText(status: String): String {

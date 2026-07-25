@@ -26,6 +26,11 @@ data class BatteryLevelPoint(
     val level: Int
 )
 
+data class TempPoint(
+    val timestamp: Long,
+    val temperature: Float
+)
+
 class BatteryHistoryManager(context: Context) {
 
     private val prefs: SharedPreferences =
@@ -45,6 +50,22 @@ class BatteryHistoryManager(context: Context) {
 
     fun getPoints(): List<BatteryLevelPoint> {
         return loadPoints().takeLast(MAX_POINTS)
+    }
+
+    fun addTempPoint(temperature: Float) {
+        val now = System.currentTimeMillis()
+        val points = loadTempPoints()
+        if (points.isNotEmpty()) {
+            val last = points.last()
+            if (now - last.timestamp < 300_000L && kotlin.math.abs(temperature - last.temperature) < 2f) return
+        }
+        points.add(TempPoint(now, temperature))
+        val trimmed = points.takeLast(MAX_POINTS)
+        saveTempPoints(trimmed)
+    }
+
+    fun getTempPoints(): List<TempPoint> {
+        return loadTempPoints().takeLast(MAX_POINTS)
     }
 
     private fun loadPoints(): MutableList<BatteryLevelPoint> {
@@ -72,8 +93,34 @@ class BatteryHistoryManager(context: Context) {
         prefs.edit().putString(KEY_HISTORY, array.toString()).apply()
     }
 
+    private fun loadTempPoints(): MutableList<TempPoint> {
+        val str = prefs.getString(KEY_TEMP_HISTORY, "[]") ?: "[]"
+        val array = try { JSONArray(str) } catch (_: Exception) { JSONArray() }
+        val list = mutableListOf<TempPoint>()
+        for (i in 0 until array.length()) {
+            val obj = array.getJSONObject(i)
+            list.add(TempPoint(
+                timestamp = obj.optLong("t"),
+                temperature = obj.optDouble("c", 0.0).toFloat()
+            ))
+        }
+        return list
+    }
+
+    private fun saveTempPoints(points: List<TempPoint>) {
+        val array = JSONArray()
+        for (p in points) {
+            array.put(JSONObject().apply {
+                put("t", p.timestamp)
+                put("c", p.temperature.toDouble())
+            })
+        }
+        prefs.edit().putString(KEY_TEMP_HISTORY, array.toString()).apply()
+    }
+
     companion object {
         private const val KEY_HISTORY = "battery_history"
+        private const val KEY_TEMP_HISTORY = "temp_history"
         private const val MAX_POINTS = 288
 
         @Volatile
@@ -190,6 +237,103 @@ fun BatteryChart(
                 radius = 6f,
                 center = Offset(lastX, lastY)
             )
+        }
+    }
+}
+
+@Composable
+fun BatteryTempChart(
+    points: List<TempPoint>,
+    modifier: Modifier = Modifier
+) {
+    if (points.isEmpty()) return
+
+    val lineColor = MaterialTheme.colorScheme.tertiary
+    val gridColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+    val labelColor = MaterialTheme.colorScheme.onSurfaceVariant
+    val density = LocalDensity.current
+
+    val minTemp = (points.minOf { it.temperature } - 2f).coerceAtMost(20f).toInt()
+    val maxTemp = (points.maxOf { it.temperature } + 2f).coerceAtLeast(50f).toInt()
+    val range = (maxTemp - minTemp).coerceAtLeast(1)
+
+    Canvas(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(120.dp)
+            .padding(start = 24.dp, end = 8.dp, bottom = 16.dp)
+    ) {
+        val textPaint = android.graphics.Paint().apply {
+            color = labelColor.hashCode()
+            textSize = with(density) { 10.dp.toPx() }
+            textAlign = android.graphics.Paint.Align.CENTER
+        }
+        val levelPaint = android.graphics.Paint().apply {
+            color = labelColor.copy(alpha = 0.6f).hashCode()
+            textSize = with(density) { 9.dp.toPx() }
+            textAlign = android.graphics.Paint.Align.RIGHT
+        }
+
+        val chartWidth = size.width
+        val chartHeight = size.height
+        val paddingTop = 4f
+        val drawHeight = chartHeight - paddingTop
+
+        val timeStart = points.first().timestamp
+        val timeEnd = points.last().timestamp
+        val timeRange = (timeEnd - timeStart).coerceAtLeast(1L).toFloat()
+
+        val gridTemps = listOf(minTemp, minTemp + range / 2, maxTemp)
+        for (t in gridTemps) {
+            val y = paddingTop + drawHeight * (1f - (t - minTemp).toFloat() / range)
+            drawLine(
+                color = gridColor,
+                start = Offset(0f, y),
+                end = Offset(chartWidth, y),
+                strokeWidth = 1f
+            )
+            drawContext.canvas.nativeCanvas.drawText(
+                "${t}°",
+                -4f, y + 4f, levelPaint
+            )
+        }
+
+        val intervalHours = if (timeRange > 24 * 3600_000L) 6 else 3
+        val intervalMs = intervalHours * 3600_000L
+        val firstHour = (timeStart / intervalMs) * intervalMs
+        var labelTime = firstHour + intervalMs
+        while (labelTime < timeEnd) {
+            val x = ((labelTime - timeStart) / timeRange) * chartWidth
+            drawLine(
+                color = gridColor.copy(alpha = 0.15f),
+                start = Offset(x, paddingTop),
+                end = Offset(x, chartHeight),
+                strokeWidth = 1f
+            )
+            val sdf = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault())
+            drawContext.canvas.nativeCanvas.drawText(
+                sdf.format(java.util.Date(labelTime)),
+                x, chartHeight + with(density) { 12.dp.toPx() }, textPaint
+            )
+            labelTime += intervalMs
+        }
+
+        if (points.size >= 2) {
+            val path = Path()
+            points.forEachIndexed { index, point ->
+                val x = ((point.timestamp - timeStart) / timeRange) * chartWidth
+                val y = paddingTop + drawHeight * (1f - (point.temperature - minTemp) / range)
+                if (index == 0) path.moveTo(x, y) else path.lineTo(x, y)
+            }
+            drawPath(
+                path = path,
+                color = lineColor,
+                style = Stroke(width = 3f, cap = StrokeCap.Round, join = StrokeJoin.Round)
+            )
+            val last = points.last()
+            val lastX = ((last.timestamp - timeStart) / timeRange) * chartWidth
+            val lastY = paddingTop + drawHeight * (1f - (last.temperature - minTemp) / range)
+            drawCircle(color = lineColor, radius = 6f, center = Offset(lastX, lastY))
         }
     }
 }

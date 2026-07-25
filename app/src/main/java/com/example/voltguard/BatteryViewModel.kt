@@ -19,6 +19,12 @@ class BatteryViewModel(application: Application) : AndroidViewModel(application)
     private val _serviceRunning = MutableStateFlow(true)
     val serviceRunning: StateFlow<Boolean> = _serviceRunning.asStateFlow()
 
+    private val _timeToFull = MutableStateFlow(0L)
+    val timeToFull: StateFlow<Long> = _timeToFull.asStateFlow()
+
+    private val _timeToEmpty = MutableStateFlow(0L)
+    val timeToEmpty: StateFlow<Long> = _timeToEmpty.asStateFlow()
+
     private var receiver: BroadcastReceiver? = null
 
     init {
@@ -31,6 +37,7 @@ class BatteryViewModel(application: Application) : AndroidViewModel(application)
         val context = getApplication<Application>()
         receiver = BatteryReceiver { info ->
             _batteryInfo.value = info
+            calculateTimeEstimates(info)
         }
         val intentFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
         ContextCompat.registerReceiver(
@@ -39,6 +46,30 @@ class BatteryViewModel(application: Application) : AndroidViewModel(application)
             intentFilter,
             ContextCompat.RECEIVER_NOT_EXPORTED
         )
+    }
+
+    private fun calculateTimeEstimates(info: BatteryInfo) {
+        val currentMa = kotlin.math.abs(info.currentNow / 1000)
+        val isFull = info.status == "Full"
+        if (currentMa == 0 || isFull) {
+            _timeToFull.value = 0L
+            _timeToEmpty.value = 0L
+            return
+        }
+        val remainingPercent = 100 - info.level
+        val isCharging = info.status == "Charging"
+        val estimatedCapacity = 4000
+        if (isCharging && currentMa > 0) {
+            val capacityAh = estimatedCapacity / 1000f
+            val hours = (remainingPercent * capacityAh * 10f) / currentMa
+            _timeToFull.value = (hours * 3600000L).toLong()
+            _timeToEmpty.value = 0L
+        } else if (!isCharging && currentMa > 0) {
+            val capacityAh = estimatedCapacity / 1000f
+            val hours = (info.level * capacityAh * 10f) / currentMa
+            _timeToEmpty.value = (hours * 3600000L).toLong()
+            _timeToFull.value = 0L
+        }
     }
 
     fun toggleService() {

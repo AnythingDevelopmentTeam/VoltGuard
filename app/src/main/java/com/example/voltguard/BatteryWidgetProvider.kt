@@ -48,13 +48,19 @@ private fun updateAppWidget(context: Context, manager: AppWidgetManager, id: Int
     val prefs = context.getSharedPreferences("voltguard_prefs", Context.MODE_PRIVATE)
     val level = prefs.getInt("widget_battery_level", 50)
     val isCharging = prefs.getBoolean("widget_battery_plugged", false)
+    val colorSetting = prefs.getString("widget_color", "auto") ?: "auto"
 
     val views = RemoteViews(context.packageName, R.layout.battery_widget_remote)
 
-    val bgColor = when {
-        level >= 80 -> 0xFF1B5E20.toInt()
-        level >= 30 -> 0xFFF57F17.toInt()
-        else -> 0xFFB71C1C.toInt()
+    val bgColor = when (colorSetting) {
+        "green" -> 0xFF1B5E20.toInt()
+        "blue" -> 0xFF0D47A1.toInt()
+        "dark" -> 0xFF212121.toInt()
+        else -> when {
+            level >= 80 -> 0xFF1B5E20.toInt()
+            level >= 30 -> 0xFFF57F17.toInt()
+            else -> 0xFFB71C1C.toInt()
+        }
     }
     views.setInt(R.id.widget_root, "setBackgroundColor", bgColor)
 

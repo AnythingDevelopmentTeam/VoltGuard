@@ -67,6 +67,7 @@ fun AccuScreen(
     val history by accuViewModel.history.collectAsState()
     val dailyUsage by accuViewModel.dailyUsage.collectAsState()
     val chartPoints by accuViewModel.chartPoints.collectAsState()
+    val tempPoints by accuViewModel.tempPoints.collectAsState()
     val showClearDialog = remember { mutableStateOf(false) }
 
     LaunchedEffect(batteryInfo) {
@@ -264,6 +265,33 @@ fun AccuScreen(
             ) {
                 BatteryChart(
                     points = chartPoints,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
+        }
+
+        if (tempPoints.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                text = stringResource(R.string.chart_temp),
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 4.dp)
+            )
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+            ) {
+                BatteryTempChart(
+                    points = tempPoints,
                     modifier = Modifier.padding(8.dp)
                 )
             }

@@ -22,6 +22,9 @@ class AccuViewModel(application: Application) : AndroidViewModel(application) {
     private val _chartPoints = MutableStateFlow<List<BatteryLevelPoint>>(emptyList())
     val chartPoints: StateFlow<List<BatteryLevelPoint>> = _chartPoints.asStateFlow()
 
+    private val _tempPoints = MutableStateFlow<List<TempPoint>>(emptyList())
+    val tempPoints: StateFlow<List<TempPoint>> = _tempPoints.asStateFlow()
+
     private val _dailyUsage = MutableStateFlow<List<DailyUsage>>(emptyList())
     val dailyUsage: StateFlow<List<DailyUsage>> = _dailyUsage.asStateFlow()
 
@@ -49,6 +52,7 @@ class AccuViewModel(application: Application) : AndroidViewModel(application) {
         _dailyUsage.value = sessionTracker.getDailyUsage()
         val historyManager = BatteryHistoryManager.getInstance(getApplication())
         _chartPoints.value = historyManager.getPoints()
+        _tempPoints.value = historyManager.getTempPoints()
     }
 
     private fun calculateTimeEstimates(info: BatteryInfo) {
