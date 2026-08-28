@@ -54,11 +54,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun BatteryScreen(
@@ -66,8 +66,7 @@ fun BatteryScreen(
     modifier: Modifier = Modifier
 ) {
     val batteryInfo by viewModel.batteryInfo.collectAsState()
-    val context = LocalContext.current
-    val settings = SettingsManager.getInstance(context)
+    val settings = koinInject<SettingsManager>()
     val recommendationsEnabled by settings.recommendationsEnabled.collectAsState()
     val timeToFull by viewModel.timeToFull.collectAsState()
     val timeToEmpty by viewModel.timeToEmpty.collectAsState()

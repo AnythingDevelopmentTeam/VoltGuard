@@ -7,11 +7,13 @@ import androidx.lifecycle.AndroidViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import org.koin.core.context.GlobalContext
 import java.io.File
 
 class AccuViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val sessionTracker = SessionTracker.getInstance(application)
+    private val sessionTracker: SessionTracker = GlobalContext.get().get()
+    private val historyManager: BatteryHistoryManager = GlobalContext.get().get()
 
     private val _stats = MutableStateFlow(ChargingStats())
     val stats: StateFlow<ChargingStats> = _stats.asStateFlow()
@@ -50,7 +52,6 @@ class AccuViewModel(application: Application) : AndroidViewModel(application) {
         _stats.value = sessionTracker.getStats()
         _history.value = getRecentSessions()
         _dailyUsage.value = sessionTracker.getDailyUsage()
-        val historyManager = BatteryHistoryManager.getInstance(getApplication())
         _chartPoints.value = historyManager.getPoints()
         _tempPoints.value = historyManager.getTempPoints()
     }

@@ -10,8 +10,13 @@ import android.content.IntentFilter
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import org.koin.android.ext.android.inject
 
 class BatteryService : Service() {
+
+    private val settings: SettingsManager by inject()
+    private val tracker: SessionTracker by inject()
+    private val history: BatteryHistoryManager by inject()
 
     private var batteryReceiver: BatteryReceiver? = null
     private var notifiedHigh = false
@@ -41,15 +46,13 @@ class BatteryService : Service() {
     }
 
     private fun registerBatteryReceiver() {
-        val tracker = SessionTracker.getInstance(this)
-        val history = BatteryHistoryManager.getInstance(this)
         batteryReceiver = BatteryReceiver { info ->
             updateStickyNotification(info.level)
             checkThresholdAndNotify(info)
             tracker.onBatteryChanged(info)
             history.addPoint(info.level)
             history.addTempPoint(info.temperature)
-            applyDnd(this)
+            applyDnd()
         }
         val intentFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
         registerReceiver(batteryReceiver, intentFilter)
@@ -63,7 +66,6 @@ class BatteryService : Service() {
     }
 
     private fun checkThresholdAndNotify(info: BatteryInfo) {
-        val settings = SettingsManager.getInstance(this)
         if (!settings.alertsEnabled.value) return
         if (settings.isInQuietHours() && !settings.dndQuietHours.value) return
 
@@ -152,7 +154,6 @@ class BatteryService : Service() {
     }
 
     private fun checkFullChargeReminder(info: BatteryInfo, isCharging: Boolean) {
-        val settings = SettingsManager.getInstance(this)
         if (!settings.fullChargeReminder.value) return
 
         val now = System.currentTimeMillis()
@@ -220,7 +221,6 @@ class BatteryService : Service() {
     }
 
     private fun sendThresholdNotification(title: String, message: String, channelId: String = CHANNEL_ALERT) {
-        val settings = SettingsManager.getInstance(this)
         val builder = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_notification_battery)
             .setContentTitle(title)
@@ -263,16 +263,15 @@ class BatteryService : Service() {
         fun stop(context: Context) {
             context.stopService(Intent(context, BatteryService::class.java))
         }
+    }
 
-        fun applyDnd(context: Context) {
-            val settings = SettingsManager.getInstance(context)
-            val manager = context.getSystemService(NotificationManager::class.java)
-            if (!manager.isNotificationPolicyAccessGranted) return
-            if (settings.dndQuietHours.value && settings.quietHoursEnabled.value && settings.isInQuietHours()) {
-                manager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALARMS)
-            } else {
-                manager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
-            }
+    private fun applyDnd() {
+        val manager = getSystemService(NotificationManager::class.java)
+        if (!manager.isNotificationPolicyAccessGranted) return
+        if (settings.dndQuietHours.value && settings.quietHoursEnabled.value && settings.isInQuietHours()) {
+            manager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALARMS)
+        } else {
+            manager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL)
         }
     }
 }

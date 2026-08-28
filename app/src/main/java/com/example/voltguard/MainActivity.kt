@@ -65,6 +65,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.voltguard.ui.theme.VoltGuardTheme
+import org.koin.compose.koinInject
 
 class MainActivity : ComponentActivity() {
 
@@ -81,8 +82,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         requestNotificationPermission()
         setContent {
-            val context = LocalContext.current
-            val settings = SettingsManager.getInstance(context)
+            val settings = koinInject<SettingsManager>()
             val firstLaunchDone by settings.firstLaunchDone.collectAsState()
             val navigationStyle by settings.navigationStyle.collectAsState()
             val darkTheme by settings.darkTheme.collectAsState()

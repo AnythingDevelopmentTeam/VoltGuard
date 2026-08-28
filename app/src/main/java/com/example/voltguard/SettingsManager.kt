@@ -218,13 +218,5 @@ class SettingsManager(context: Context) {
         private const val KEY_WIDGET_COLOR = "widget_color"
         private const val KEY_BATTERY_SAVER = "battery_saver_threshold"
         private const val KEY_DND_QUIET = "dnd_quiet_hours"
-
-        @Volatile
-        private var instance: SettingsManager? = null
-
-        fun getInstance(context: Context): SettingsManager =
-            instance ?: synchronized(this) {
-                instance ?: SettingsManager(context.applicationContext).also { instance = it }
-            }
     }
 }

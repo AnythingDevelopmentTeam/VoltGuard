@@ -37,11 +37,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    val settings = SettingsManager.getInstance(context)
+    val settings = koinInject<SettingsManager>()
     val serviceRunning by viewModel.serviceRunning.collectAsState()
 
     val lowThreshold by settings.lowThreshold.collectAsState()

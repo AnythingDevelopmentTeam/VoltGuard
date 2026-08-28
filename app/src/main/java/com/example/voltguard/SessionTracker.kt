@@ -2,6 +2,13 @@ package com.example.voltguard
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.voltguard.data.AppDatabase
+import com.example.voltguard.data.SessionColumns
+import com.example.voltguard.data.SessionDao
+import com.example.voltguard.data.SessionEntity
+import com.example.voltguard.data.toBatterySession
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -10,13 +17,18 @@ import java.util.Locale
 
 class SessionTracker(context: Context) {
 
-    private val prefs: SharedPreferences =
-        context.getSharedPreferences("voltguard_sessions", Context.MODE_PRIVATE)
+    private val appContext: Context = context.applicationContext
+    private val db: AppDatabase = AppDatabase.getInstance(appContext)
+    private val sessionDao: SessionDao = db.sessionDao()
 
     private var currentSession: BatterySession? = null
     private var lastLevel: Int = -1
     private var sampleCount: Int = 0
     private var cumulativeCurrent: Long = 0L
+
+    init {
+        migrateLegacySessionsIfNeeded()
+    }
 
     fun onBatteryChanged(info: BatteryInfo): BatterySession? {
         val isCharging = info.status == "Charging" || info.status == "Full"
@@ -131,7 +143,7 @@ class SessionTracker(context: Context) {
             chargeSessions.takeLast(10).map { it.endLevel - it.startLevel }.average().toInt()
         } else 0
 
-        val designCapacity = 4000
+        val designCapacity = BatteryCapacity.getDesignCapacity(appContext)
         val estimatedCapacity = if (avgCapacity > 0) {
             (designCapacity * avgCapacity / 100.0).toInt()
         } else designCapacity
@@ -196,50 +208,60 @@ class SessionTracker(context: Context) {
     }
 
     fun clearAllSessions() {
-        prefs.edit().putString(KEY_SESSIONS, "[]").apply()
+        runBlocking(Dispatchers.IO) {
+            sessionDao.clear()
+        }
         currentSession = null
         lastLevel = -1
     }
 
     private fun saveSession(session: BatterySession) {
-        val json = sessionToJson(session)
-        val array = loadSessionArray()
-        array.put(json)
-        if (array.length() > MAX_SESSIONS) {
-            val trimmed = JSONArray()
-            for (i in array.length() - MAX_SESSIONS until array.length()) {
-                trimmed.put(array.get(i))
-            }
-            prefs.edit().putString(KEY_SESSIONS, trimmed.toString()).apply()
-        } else {
-            prefs.edit().putString(KEY_SESSIONS, array.toString()).apply()
+        runBlocking(Dispatchers.IO) {
+            sessionDao.insert(SessionEntity.from(session.type, toColumns(session)))
         }
     }
 
-    private fun loadSessions(): List<BatterySession> {
-        return loadSessionArray().let { array ->
-            (0 until array.length()).map { i -> jsonToSession(array.getJSONObject(i)) }
+    private fun loadSessions(): List<BatterySession> =
+        runBlocking(Dispatchers.IO) {
+            sessionDao.getAll().map { it.toBatterySession() }
+        }
+
+    private fun toColumns(s: BatterySession): SessionColumns =
+        SessionColumns(
+            id = s.id,
+            startLevel = s.startLevel,
+            endLevel = s.endLevel,
+            startTime = s.startTime,
+            endTime = s.endTime,
+            startVoltage = s.startVoltage,
+            endVoltage = s.endVoltage,
+            avgCurrent = s.avgCurrent,
+            avgTemperature = s.avgTemperature,
+            chargeAdded = s.chargeAdded,
+            duration = s.duration
+        )
+
+    private fun migrateLegacySessionsIfNeeded() {
+        if (runBlocking(Dispatchers.IO) { sessionDao.count() } > 0) return
+        val legacy = loadLegacySessions()
+        if (legacy.isEmpty()) return
+        runBlocking(Dispatchers.IO) {
+            legacy.forEach { sessionDao.insert(it) }
         }
     }
 
-    private fun loadSessionArray(): JSONArray {
+    private fun loadLegacySessions(): List<SessionEntity> {
+        val prefs: SharedPreferences =
+            appContext.getSharedPreferences("voltguard_sessions", Context.MODE_PRIVATE)
         val str = prefs.getString(KEY_SESSIONS, "[]") ?: "[]"
-        return try { JSONArray(str) } catch (_: Exception) { JSONArray() }
-    }
-
-    private fun sessionToJson(s: BatterySession): JSONObject = JSONObject().apply {
-        put("id", s.id)
-        put("type", s.type.name)
-        put("startLevel", s.startLevel)
-        put("endLevel", s.endLevel)
-        put("startTime", s.startTime)
-        put("endTime", s.endTime)
-        put("startVoltage", s.startVoltage)
-        put("endVoltage", s.endVoltage)
-        put("avgCurrent", s.avgCurrent)
-        put("avgTemperature", s.avgTemperature.toDouble())
-        put("chargeAdded", s.chargeAdded)
-        put("duration", s.duration)
+        val array = try { JSONArray(str) } catch (_: Exception) { JSONArray() }
+        val list = mutableListOf<SessionEntity>()
+        for (i in 0 until array.length()) {
+            val j = try { array.getJSONObject(i) } catch (_: Exception) { continue }
+            val session = jsonToSession(j)
+            list.add(SessionEntity.from(session.type, toColumns(session)))
+        }
+        return list
     }
 
     private fun jsonToSession(j: JSONObject): BatterySession = BatterySession(
@@ -259,14 +281,5 @@ class SessionTracker(context: Context) {
 
     companion object {
         private const val KEY_SESSIONS = "sessions"
-        private const val MAX_SESSIONS = 200
-
-        @Volatile
-        private var instance: SessionTracker? = null
-
-        fun getInstance(context: Context): SessionTracker =
-            instance ?: synchronized(this) {
-                instance ?: SessionTracker(context.applicationContext).also { instance = it }
-            }
     }
 }

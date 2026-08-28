@@ -1,7 +1,6 @@
 package com.example.voltguard
 
 import android.content.Context
-import android.content.SharedPreferences
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,8 +17,12 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import org.json.JSONArray
-import org.json.JSONObject
+import com.example.voltguard.data.AppDatabase
+import com.example.voltguard.data.HistoryDao
+import com.example.voltguard.data.LevelPointEntity
+import com.example.voltguard.data.TempPointEntity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 
 data class BatteryLevelPoint(
     val timestamp: Long,
@@ -33,48 +36,70 @@ data class TempPoint(
 
 class BatteryHistoryManager(context: Context) {
 
-    private val prefs: SharedPreferences =
-        context.getSharedPreferences("voltguard_history", Context.MODE_PRIVATE)
+    private val db: AppDatabase = AppDatabase.getInstance(context)
+    private val historyDao: HistoryDao = db.historyDao()
+
+    init {
+        migrateLegacyIfNeeded()
+    }
 
     fun addPoint(level: Int) {
         val now = System.currentTimeMillis()
-        val points = loadPoints()
+        val points = getPoints()
         if (points.isNotEmpty()) {
             val last = points.last()
             if (now - last.timestamp < 300_000L && level == last.level) return
         }
-        points.add(BatteryLevelPoint(now, level))
-        val trimmed = points.takeLast(MAX_POINTS)
-        savePoints(trimmed)
+        runBlocking(Dispatchers.IO) {
+            historyDao.insertAllLevels(listOf(LevelPointEntity(now, level)))
+            historyDao.trimLevels(MAX_POINTS)
+        }
     }
 
-    fun getPoints(): List<BatteryLevelPoint> {
-        return loadPoints().takeLast(MAX_POINTS)
-    }
+    fun getPoints(): List<BatteryLevelPoint> =
+        runBlocking(Dispatchers.IO) {
+            historyDao.getLevelPoints().map { BatteryLevelPoint(it.timestamp, it.level) }
+        }
 
     fun addTempPoint(temperature: Float) {
         val now = System.currentTimeMillis()
-        val points = loadTempPoints()
+        val points = getTempPoints()
         if (points.isNotEmpty()) {
             val last = points.last()
             if (now - last.timestamp < 300_000L && kotlin.math.abs(temperature - last.temperature) < 2f) return
         }
-        points.add(TempPoint(now, temperature))
-        val trimmed = points.takeLast(MAX_POINTS)
-        saveTempPoints(trimmed)
+        runBlocking(Dispatchers.IO) {
+            historyDao.insertAllTemps(listOf(TempPointEntity(now, temperature)))
+            historyDao.trimTemps(MAX_POINTS)
+        }
     }
 
-    fun getTempPoints(): List<TempPoint> {
-        return loadTempPoints().takeLast(MAX_POINTS)
+    fun getTempPoints(): List<TempPoint> =
+        runBlocking(Dispatchers.IO) {
+            historyDao.getTempPoints().map { TempPoint(it.timestamp, it.temperature) }
+        }
+
+    private fun migrateLegacyIfNeeded() {
+        if (runBlocking(Dispatchers.IO) { historyDao.levelCount() } > 0 ||
+            runBlocking(Dispatchers.IO) { historyDao.tempCount() } > 0) return
+
+        val legacyLevels = loadLegacyLevels()
+        val legacyTemps = loadLegacyTemps()
+        if (legacyLevels.isEmpty() && legacyTemps.isEmpty()) return
+
+        runBlocking(Dispatchers.IO) {
+            if (legacyLevels.isNotEmpty()) historyDao.insertAllLevels(legacyLevels)
+            if (legacyTemps.isNotEmpty()) historyDao.insertAllTemps(legacyTemps)
+        }
     }
 
-    private fun loadPoints(): MutableList<BatteryLevelPoint> {
-        val str = prefs.getString(KEY_HISTORY, "[]") ?: "[]"
-        val array = try { JSONArray(str) } catch (_: Exception) { JSONArray() }
-        val list = mutableListOf<BatteryLevelPoint>()
+    private fun loadLegacyLevels(): List<LevelPointEntity> {
+        val str = legacyPrefs.getString(KEY_HISTORY, "[]") ?: "[]"
+        val array = try { org.json.JSONArray(str) } catch (_: Exception) { org.json.JSONArray() }
+        val list = mutableListOf<LevelPointEntity>()
         for (i in 0 until array.length()) {
-            val obj = array.getJSONObject(i)
-            list.add(BatteryLevelPoint(
+            val obj = try { array.getJSONObject(i) } catch (_: Exception) { continue }
+            list.add(LevelPointEntity(
                 timestamp = obj.optLong("t"),
                 level = obj.optInt("l")
             ))
@@ -82,24 +107,13 @@ class BatteryHistoryManager(context: Context) {
         return list
     }
 
-    private fun savePoints(points: List<BatteryLevelPoint>) {
-        val array = JSONArray()
-        for (p in points) {
-            array.put(JSONObject().apply {
-                put("t", p.timestamp)
-                put("l", p.level)
-            })
-        }
-        prefs.edit().putString(KEY_HISTORY, array.toString()).apply()
-    }
-
-    private fun loadTempPoints(): MutableList<TempPoint> {
-        val str = prefs.getString(KEY_TEMP_HISTORY, "[]") ?: "[]"
-        val array = try { JSONArray(str) } catch (_: Exception) { JSONArray() }
-        val list = mutableListOf<TempPoint>()
+    private fun loadLegacyTemps(): List<TempPointEntity> {
+        val str = legacyPrefs.getString(KEY_TEMP_HISTORY, "[]") ?: "[]"
+        val array = try { org.json.JSONArray(str) } catch (_: Exception) { org.json.JSONArray() }
+        val list = mutableListOf<TempPointEntity>()
         for (i in 0 until array.length()) {
-            val obj = array.getJSONObject(i)
-            list.add(TempPoint(
+            val obj = try { array.getJSONObject(i) } catch (_: Exception) { continue }
+            list.add(TempPointEntity(
                 timestamp = obj.optLong("t"),
                 temperature = obj.optDouble("c", 0.0).toFloat()
             ))
@@ -107,29 +121,15 @@ class BatteryHistoryManager(context: Context) {
         return list
     }
 
-    private fun saveTempPoints(points: List<TempPoint>) {
-        val array = JSONArray()
-        for (p in points) {
-            array.put(JSONObject().apply {
-                put("t", p.timestamp)
-                put("c", p.temperature.toDouble())
-            })
-        }
-        prefs.edit().putString(KEY_TEMP_HISTORY, array.toString()).apply()
-    }
+    private val legacyPrefs: android.content.SharedPreferences
+        get() = legacyContext.getSharedPreferences("voltguard_history", android.content.Context.MODE_PRIVATE)
+
+    private val legacyContext: Context = context.applicationContext
 
     companion object {
         private const val KEY_HISTORY = "battery_history"
         private const val KEY_TEMP_HISTORY = "temp_history"
         private const val MAX_POINTS = 288
-
-        @Volatile
-        private var instance: BatteryHistoryManager? = null
-
-        fun getInstance(context: Context): BatteryHistoryManager =
-            instance ?: synchronized(this) {
-                instance ?: BatteryHistoryManager(context.applicationContext).also { instance = it }
-            }
     }
 }
 

@@ -51,7 +51,9 @@ object UpdateChecker {
         }
     }
 
-    private fun compareVersions(a: String, b: String): Int {
+    private fun compareVersions(a: String, b: String): Int = compareVersionStrings(a, b)
+
+    internal fun compareVersionStrings(a: String, b: String): Int {
         val aParts = a.split(Regex("[.\\-]"))
         val bParts = b.split(Regex("[.\\-]"))
         val maxLen = maxOf(aParts.size, bParts.size)

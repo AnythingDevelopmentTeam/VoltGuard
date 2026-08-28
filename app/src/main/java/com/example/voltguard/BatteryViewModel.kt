@@ -58,7 +58,7 @@ class BatteryViewModel(application: Application) : AndroidViewModel(application)
         }
         val remainingPercent = 100 - info.level
         val isCharging = info.status == "Charging"
-        val estimatedCapacity = 4000
+        val estimatedCapacity = BatteryCapacity.getDesignCapacity(getApplication())
         if (isCharging && currentMa > 0) {
             val capacityAh = estimatedCapacity / 1000f
             val hours = (remainingPercent * capacityAh * 10f) / currentMa
