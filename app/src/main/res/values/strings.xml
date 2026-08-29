@@ -92,6 +92,15 @@
     <string name="target_sdk">Target SDK</string>
     <string name="appearance">Appearance</string>
     <string name="dark_theme">Dark theme</string>
+    <string name="dynamic_color">Dynamic color</string>
+    <string name="dynamic_color_desc">Uses wallpaper colors (Android 12+). Turn it off to pick an accent color.</string>
+    <string name="accent_color">Accent color</string>
+    <string name="theme_color_green">Green</string>
+    <string name="theme_color_blue">Blue</string>
+    <string name="theme_color_teal">Teal</string>
+    <string name="theme_color_purple">Purple</string>
+    <string name="theme_color_orange">Orange</string>
+    <string name="theme_color_red">Red</string>
 
     <!-- AboutScreen -->
     <string name="about_title">About</string>
@@ -180,10 +189,16 @@
     <!-- Widget -->
     <string name="widget_settings">Widget</string>
     <string name="widget_color">Widget color</string>
+    <string name="widget_show_status">Show charging status</string>
+    <string name="widget_show_temp">Show temperature</string>
     <string name="widget_auto">Auto</string>
     <string name="widget_green">Green</string>
     <string name="widget_blue">Blue</string>
     <string name="widget_dark">Dark</string>
+    <string name="widget_white">White</string>
+    <string name="widget_purple">Purple</string>
+    <string name="widget_red">Red</string>
+    <string name="widget_teal">Teal</string>
 
     <!-- Battery saver -->
     <string name="battery_saver">Battery saver alert</string>

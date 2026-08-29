@@ -1,5 +1,6 @@
 package com.example.voltguard
 
+import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -60,6 +61,10 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
     val alertVibrate by settings.alertVibrate.collectAsState()
     val chargeSpeedAlert by settings.chargeSpeedAlert.collectAsState()
     val widgetColor by settings.widgetColor.collectAsState()
+    val widgetStatus by settings.widgetStatus.collectAsState()
+    val widgetTemp by settings.widgetTemp.collectAsState()
+    val themeColor by settings.themeColor.collectAsState()
+    val dynamicColor by settings.dynamicColor.collectAsState()
     val batterySaverThreshold by settings.batterySaverThreshold.collectAsState()
     val dndQuietHours by settings.dndQuietHours.collectAsState()
 
@@ -167,16 +172,115 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
                     onCheckedChange = { settings.setDarkTheme(it) }
                 )
             }
+
+            val dynamicSupported = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S
+            if (dynamicSupported) {
+                Spacer(modifier = Modifier.height(8.dp))
+                SettingsRow(label = stringResource(R.string.dynamic_color)) {
+                    Switch(
+                        checked = dynamicColor,
+                        onCheckedChange = { settings.setDynamicColor(it) }
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(R.string.dynamic_color_desc),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    lineHeight = 18.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = stringResource(R.string.accent_color),
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+
+            val accentOptions = listOf(
+                stringResource(R.string.theme_color_green) to "green",
+                stringResource(R.string.theme_color_blue) to "blue",
+                stringResource(R.string.theme_color_teal) to "teal",
+                stringResource(R.string.theme_color_purple) to "purple",
+                stringResource(R.string.theme_color_orange) to "orange",
+                stringResource(R.string.theme_color_red) to "red"
+            )
+            val accentLocked = dynamicSupported && dynamicColor
+            accentOptions.forEach { (label, value) ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .selectable(
+                            selected = themeColor == value,
+                            onClick = { settings.setThemeColor(value) },
+                            role = Role.RadioButton,
+                            enabled = !accentLocked
+                        )
+                        .padding(vertical = 2.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = themeColor == value,
+                        onClick = null,
+                        enabled = !accentLocked,
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = MaterialTheme.colorScheme.primary
+                        )
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = label, style = MaterialTheme.typography.bodyMedium)
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
         SettingsCard(title = stringResource(R.string.widget_settings)) {
+            SettingsRow(label = stringResource(R.string.widget_show_status)) {
+                Switch(
+                    checked = widgetStatus,
+                    onCheckedChange = {
+                        settings.setWidgetStatus(it)
+                        refreshWidgets(context)
+                    }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            SettingsRow(label = stringResource(R.string.widget_show_temp)) {
+                Switch(
+                    checked = widgetTemp,
+                    onCheckedChange = {
+                        settings.setWidgetTemp(it)
+                        refreshWidgets(context)
+                    }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = stringResource(R.string.widget_color),
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+
             val colors = listOf(
                 stringResource(R.string.widget_auto) to "auto",
                 stringResource(R.string.widget_green) to "green",
                 stringResource(R.string.widget_blue) to "blue",
-                stringResource(R.string.widget_dark) to "dark"
+                stringResource(R.string.widget_dark) to "dark",
+                stringResource(R.string.widget_white) to "white",
+                stringResource(R.string.widget_purple) to "purple",
+                stringResource(R.string.widget_red) to "red",
+                stringResource(R.string.widget_teal) to "teal"
             )
             colors.forEach { (label, value) ->
                 Row(
@@ -184,7 +288,10 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
                         .fillMaxWidth()
                         .selectable(
                             selected = widgetColor == value,
-                            onClick = { settings.setWidgetColor(value) },
+                            onClick = {
+                                settings.setWidgetColor(value)
+                                refreshWidgets(context)
+                            },
                             role = Role.RadioButton
                         )
                         .padding(vertical = 2.dp),
@@ -493,6 +600,22 @@ fun SettingsScreen(viewModel: BatteryViewModel = viewModel(), modifier: Modifier
         }
 
         Spacer(modifier = Modifier.height(48.dp))
+    }
+}
+
+private fun refreshWidgets(context: android.content.Context) {
+    val manager = android.appwidget.AppWidgetManager.getInstance(context)
+    val regular = manager.getAppWidgetIds(
+        android.content.ComponentName(context, BatteryWidgetProvider::class.java)
+    )
+    val small = manager.getAppWidgetIds(
+        android.content.ComponentName(context, BatteryWidgetProviderSmall::class.java)
+    )
+    if (regular.isNotEmpty()) {
+        context.sendBroadcast(Intent(BatteryWidgetProvider.ACTION_UPDATE_WIDGET))
+    }
+    if (small.isNotEmpty()) {
+        context.sendBroadcast(Intent(BatteryWidgetProviderSmall.ACTION_UPDATE_WIDGET_SMALL))
     }
 }
 

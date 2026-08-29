@@ -84,6 +84,29 @@
     <string name="full_charge_reminder">Напоминание о полной зарядке</string>
     <string name="full_charge_reminder_title">Отключи зарядное устройство</string>
     <string name="full_charge_reminder_body">Батарея долгое время находится на 100%% — отключи зарядку, чтобы сохранить её ресурс</string>
+    <string name="appearance">Внешний вид</string>
+    <string name="dark_theme">Тёмная тема</string>
+    <string name="dynamic_color">Динамический цвет</string>
+    <string name="dynamic_color_desc">Использует цвета обоев (Android 12+). Выключи, чтобы выбрать акцентный цвет.</string>
+    <string name="accent_color">Акцентный цвет</string>
+    <string name="theme_color_green">Зелёный</string>
+    <string name="theme_color_blue">Синий</string>
+    <string name="theme_color_teal">Бирюзовый</string>
+    <string name="theme_color_purple">Фиолетовый</string>
+    <string name="theme_color_orange">Оранжевый</string>
+    <string name="theme_color_red">Красный</string>
+    <string name="widget_settings">Виджет</string>
+    <string name="widget_color">Цвет виджета</string>
+    <string name="widget_show_status">Показывать статус зарядки</string>
+    <string name="widget_show_temp">Показывать температуру</string>
+    <string name="widget_auto">Авто</string>
+    <string name="widget_green">Зелёный</string>
+    <string name="widget_blue">Синий</string>
+    <string name="widget_dark">Тёмный</string>
+    <string name="widget_white">Белый</string>
+    <string name="widget_purple">Фиолетовый</string>
+    <string name="widget_red">Красный</string>
+    <string name="widget_teal">Бирюзовый</string>
 
     <!-- AboutScreen -->
     <string name="about_title">О приложении</string>

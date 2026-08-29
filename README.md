@@ -44,6 +44,13 @@ Android battery monitoring app built with Kotlin + Jetpack Compose.
 - Low threshold slider (5–40%)
 - High threshold slider (60–95%)
 - Background service toggle
+- Accent color picker (green / blue / teal / purple / orange / red)
+- Dynamic color toggle (wallpaper colors, Android 12+)
+
+### Widgets
+- 2x1 and small battery widgets
+- Background color picker (auto / green / blue / dark / white / purple / red / teal)
+- Optional charging status + temperature line
 
 ### UI / Animations
 - 4-page horizontal pager with iOS-style dot indicators

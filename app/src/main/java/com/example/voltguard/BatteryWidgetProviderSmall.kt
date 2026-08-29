@@ -2,6 +2,7 @@ package com.example.voltguard
 
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
@@ -19,7 +20,7 @@ class BatteryWidgetProviderSmall : AppWidgetProvider() {
         if (intent.action == ACTION_UPDATE_WIDGET_SMALL) {
             val manager = AppWidgetManager.getInstance(context)
             val ids = manager.getAppWidgetIds(
-                android.content.ComponentName(context, BatteryWidgetProviderSmall::class.java)
+                ComponentName(context, BatteryWidgetProviderSmall::class.java)
             )
             for (id in ids) {
                 updateSmallWidget(context, manager, id)
@@ -34,6 +35,7 @@ class BatteryWidgetProviderSmall : AppWidgetProvider() {
             val prefs = context.getSharedPreferences("voltguard_prefs", Context.MODE_PRIVATE)
             prefs.edit()
                 .putInt("widget_small_level", info.level)
+                .putString("widget_small_status", info.status)
                 .putBoolean("widget_small_plugged", info.status == "Charging" || info.status == "Full")
                 .apply()
             val intent = Intent(context, BatteryWidgetProviderSmall::class.java).apply {
@@ -50,23 +52,20 @@ private fun updateSmallWidget(context: Context, manager: AppWidgetManager, id: I
     val isCharging = prefs.getBoolean("widget_small_plugged", false)
     val colorSetting = prefs.getString("widget_color", "auto") ?: "auto"
 
-    val views = RemoteViews(context.packageName, R.layout.battery_widget_small)
+    val (bgColor, textColor) = widgetColors(colorSetting, level)
 
-    val bgColor = when (colorSetting) {
-        "green" -> 0xFF1B5E20.toInt()
-        "blue" -> 0xFF0D47A1.toInt()
-        "dark" -> 0xFF212121.toInt()
-        else -> when {
-            level >= 80 -> 0xFF1B5E20.toInt()
-            level >= 30 -> 0xFFF57F17.toInt()
-            else -> 0xFFB71C1C.toInt()
-        }
-    }
+    val views = RemoteViews(context.packageName, R.layout.battery_widget_small)
     views.setInt(R.id.widget_root, "setBackgroundColor", bgColor)
+    views.setTextColor(R.id.widget_level, textColor)
+    views.setTextColor(R.id.widget_unit, textColor)
 
     views.setTextViewText(R.id.widget_level, "$level")
 
-    val unitText = if (isCharging) "${context.getString(R.string.widget_percent)} ⚡" else context.getString(R.string.widget_percent)
+    val unitText = if (isCharging) {
+        "${context.getString(R.string.widget_percent)} ⚡"
+    } else {
+        context.getString(R.string.widget_percent)
+    }
     views.setTextViewText(R.id.widget_unit, unitText)
 
     manager.updateAppWidget(id, views)

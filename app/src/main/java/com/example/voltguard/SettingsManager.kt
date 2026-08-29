@@ -59,6 +59,18 @@ class SettingsManager(context: Context) {
     private val _widgetColor = MutableStateFlow(prefs.getString(KEY_WIDGET_COLOR, "auto") ?: "auto")
     val widgetColor: StateFlow<String> = _widgetColor.asStateFlow()
 
+    private val _widgetStatus = MutableStateFlow(prefs.getBoolean(KEY_WIDGET_STATUS, true))
+    val widgetStatus: StateFlow<Boolean> = _widgetStatus.asStateFlow()
+
+    private val _widgetTemp = MutableStateFlow(prefs.getBoolean(KEY_WIDGET_TEMP, true))
+    val widgetTemp: StateFlow<Boolean> = _widgetTemp.asStateFlow()
+
+    private val _themeColor = MutableStateFlow(prefs.getString(KEY_THEME_COLOR, "green") ?: "green")
+    val themeColor: StateFlow<String> = _themeColor.asStateFlow()
+
+    private val _dynamicColor = MutableStateFlow(prefs.getBoolean(KEY_DYNAMIC_COLOR, true))
+    val dynamicColor: StateFlow<Boolean> = _dynamicColor.asStateFlow()
+
     private val _batterySaverThreshold = MutableStateFlow(prefs.getInt(KEY_BATTERY_SAVER, 15))
     val batterySaverThreshold: StateFlow<Int> = _batterySaverThreshold.asStateFlow()
 
@@ -189,6 +201,26 @@ class SettingsManager(context: Context) {
         _widgetColor.value = color
     }
 
+    fun setWidgetStatus(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_WIDGET_STATUS, enabled).apply()
+        _widgetStatus.value = enabled
+    }
+
+    fun setWidgetTemp(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_WIDGET_TEMP, enabled).apply()
+        _widgetTemp.value = enabled
+    }
+
+    fun setThemeColor(color: String) {
+        prefs.edit().putString(KEY_THEME_COLOR, color).apply()
+        _themeColor.value = color
+    }
+
+    fun setDynamicColor(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_DYNAMIC_COLOR, enabled).apply()
+        _dynamicColor.value = enabled
+    }
+
     fun setBatterySaverThreshold(value: Int) {
         prefs.edit().putInt(KEY_BATTERY_SAVER, value).apply()
         _batterySaverThreshold.value = value
@@ -216,6 +248,10 @@ class SettingsManager(context: Context) {
         private const val KEY_ALERT_VIBRATE = "alert_vibrate"
         private const val KEY_CHARGE_SPEED = "charge_speed_alert"
         private const val KEY_WIDGET_COLOR = "widget_color"
+        private const val KEY_WIDGET_STATUS = "widget_status"
+        private const val KEY_WIDGET_TEMP = "widget_temp"
+        private const val KEY_THEME_COLOR = "theme_color"
+        private const val KEY_DYNAMIC_COLOR = "dynamic_color"
         private const val KEY_BATTERY_SAVER = "battery_saver_threshold"
         private const val KEY_DND_QUIET = "dnd_quiet_hours"
     }

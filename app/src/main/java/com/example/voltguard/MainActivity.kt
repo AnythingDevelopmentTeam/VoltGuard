@@ -86,8 +86,10 @@ class MainActivity : ComponentActivity() {
             val firstLaunchDone by settings.firstLaunchDone.collectAsState()
             val navigationStyle by settings.navigationStyle.collectAsState()
             val darkTheme by settings.darkTheme.collectAsState()
+            val dynamicColor by settings.dynamicColor.collectAsState()
+            val themeColor by settings.themeColor.collectAsState()
 
-            VoltGuardTheme(darkTheme = darkTheme) {
+            VoltGuardTheme(darkTheme = darkTheme, dynamicColor = dynamicColor, accent = themeColor) {
 
                 if (firstLaunchDone) {
                     when (navigationStyle) {
