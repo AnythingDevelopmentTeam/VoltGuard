@@ -36,7 +36,9 @@ data class TempPoint(
 
 class BatteryHistoryManager(context: Context) {
 
-    private val db: AppDatabase = AppDatabase.getInstance(context)
+    private val legacyContext: Context = context.applicationContext
+    private val appContext: Context = context.applicationContext
+    private val db: AppDatabase = AppDatabase.getInstance(appContext)
     private val historyDao: HistoryDao = db.historyDao()
 
     init {
@@ -123,8 +125,6 @@ class BatteryHistoryManager(context: Context) {
 
     private val legacyPrefs: android.content.SharedPreferences
         get() = legacyContext.getSharedPreferences("voltguard_history", android.content.Context.MODE_PRIVATE)
-
-    private val legacyContext: Context = context.applicationContext
 
     companion object {
         private const val KEY_HISTORY = "battery_history"
